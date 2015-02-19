@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SimpleGPSTracker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="empty"></string>
+    <string name="action_settings">Settings</string>
+    <string name="server_url_field_title">Set url server</string>
+    <string name="title_activity_view_map">ViewMapActivity</string>
+    <string name="title_activity_server_url">ServerUrlActivity</string>
+    <string name="title_activity_pref">Settings</string>
+    <string name="set">Set</string>
+    <string name="gps_off">Eneble GPS</string>
+    <string name="network_off">Eneble Network</string>
+    <string name="b_start">Start</string>
+    <string name="b_stop">Stop</string>
+    <string name="b_map">Map</string>
+    <string name="b_send">Send</string>
+    <string name="b_set">Set</string>
+    <string name="satellite">Satellite</string>
+    <string name="message_base_empty">Base of point is empty</string>
+    <string name="message_no_saved_route">There is no records</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_kalman_t">KalmanManager</string>
+    <string name="action_kalman_g">KalmanGeo</string>
+    <string name="action_kalman_c">KalmanC</string>
+    <string name="action_show_markers">Markers</string>
+    <string name="action_show_lines">Lines</string>
+    <string name="action_show_processed">Processed</string>
+    <string name="dialog_warning_title">Warning</string>
+    <string name="dialog_warning_button_ok">ОК</string>
+    <string name="dialog_warning_message_net">Network not enabled. Enable Network or GPS</string>
+    <string name="dialog_warning_message_gps">GPS not enabled. Enable GPS or Network</string>
+    
+    <string name="title_pref_location">Location parameters</string>
+    <string name="title_pref_route">Route</string>
+    <string name="title_pref_addition">Addition</string>
+    
+    <string name="providers">Providers</string>
+    <string name="providers_key">providers</string>
+    <string name="providers_title">Providers</string>
+    <string name="summary_providers">Selection of provider</string>
+    
+    <string name="refresh_time_title">Refresh</string>
+    <string name="refresh_time_key">refreshTime</string>
+    <string name="summary_refresh_time">Select refresh time</string>
+    
+    <string name="line_width_title">Line width</string>
+    <string name="line_width_key">lineWidth</string>
+    <string name="summary_line_width">Select a line width route</string>
+    
+    <string name="view_route_title">Route view</string>
+    <string name="view_route_key">viewRoute</string>
+    <string name="summary_view_route">How a route will be show on a map</string>
+    
+    <string name="travel_mode_title">Travel mode</string>
+    <string name="travel_mode_key">travelMode</string>
+    <string name="summary_travel_mode">Select travel mode</string>
+    
+    <string name="kalman_filter_title">Kalman filter</string>
+    <string name="kalman_filter_key">kalman</string>
+    <string name="summary_kalman_filter">Kalman filtering</string>
+    
+    <string name="set_url_server">Set url server</string>
+    <string name="url_server_title">Set url server</string>
+    <string name="url_server_key">url</string>
+    <string name="summary_url_server">Set url server</string>
+    
+    <string name="service_start">Service is started</string>
+    <string name="service_stop">Service is stoped</string>
+    <string name="service_started">You must stop the service</string>
+    <string name="status_enabled">Enabled</string>
+    <string name="status_disabled">Disabled</string>
+    <string name="gps">GPS</string>
+    <string name="network">Network</string>
+    <string name="accelerate">Accelerate</string>
+    <string name="accelerate_value">m/s</string>
+    <string name="orientation_x">Orientation X</string>
+    <string name="orientation_y">Orientation y</string>
+    <string name="orientation_z">Orientation z</string>
+    
+    <string name="save">Save</string>
+    <string name="no">No</string>
+    <string name="maybe">Maybe</string>
+    <string name="dialog_title_save">Maybe</string>
+    <string name="dialog_message_save">Maybe</string>
+    <string name="enter_route_name">Enter route name:</string>
+    <string name="send_hint">Send data to server</string>
+    <string name="time_start">Time start: </string>
+    <string name="time_stop">Time stop: </string>
+    <string name="duration">Duration:</string>
+    <string name="distance">Distance:</string>
+    <string name="average_speed">Speed:</string>
+    <string name="speed">Speed:</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="speed_value">m/s</string>
+    <string name="distance_value">m</string>
+    
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+
+    <color name="bg_color">#ffffff</color>
+
+    <string name="loading">Loading..</string>
+    
+    <string name="allert_map_title">Warning!</string>
+	<string name="allert_map_message">Please select a saved route or start recording.</string>
+	
+    <string-array name="location_provider">
+        <item>GPS</item>
+        <item>Network</item>
+        <item>Best provider</item>
+    </string-array>
+    <string-array name="location_provider_value">
+        <item>"GPS"</item>
+        <item>"Network"</item>
+        <item>"Best provider"</item>
+    </string-array>
+    <string-array name="view_route">
+        <item>As markers</item>
+        <item>As lines</item>
+        <item>As real point</item>
+    </string-array>
+    <string-array name="view_route_value">
+        <item>"marker"</item>
+        <item>"line"</item>
+        <item>"realPoint"</item>
+    </string-array>
+    <string-array name="refresh_time">
+        <item>1 second</item>
+        <item>2 second</item>
+        <item>5 second</item>
+        <item>10 second</item>
+    </string-array>
+    <string-array name="refresh_time_value">
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"5"</item>
+        <item>"10"</item>
+    </string-array>
+    <string-array name="line_width">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+   </string-array>
+   <string-array name="line_width_value">
+        <item>"2"</item>
+        <item>"4"</item>
+        <item>"6"</item>
+        <item>"8"</item>
+        <item>"10"</item>
+    </string-array>
+    <string-array name="travel_mode">
+        <item>driving</item>
+        <item>walking</item>
+        <item>bicycling</item>
+        <item>transit</item>
+    </string-array>
+    <string-array name="travel_mode_value">
+        <item>"driving"</item>
+        <item>"walking"</item>
+        <item>"bicycling"</item>
+        <item>"transit"</item>
+    </string-array>
+    <string-array name="kalman_name">
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+    <string-array name="kalman_value">
+        <item>"on"</item>
+        <item>"off"</item>
+    </string-array>
+
+    <string name="title_activity_test_map">TestMapActivity</string>
+   	<string name="myRoute">My routes</string>
+
+</resources>

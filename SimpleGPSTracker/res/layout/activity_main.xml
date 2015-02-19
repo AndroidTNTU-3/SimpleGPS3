@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.unrealedz.gpstracker.TestMap"
+    tools:ignore="MergeRootFrame" >
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <LinearLayout
+        android:id="@+id/llTopBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/ivSatellite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:contentDescription="@string/empty"
+            android:padding="3dp"
+            android:src="@drawable/satellite" />
+
+        <TextView
+            android:id="@+id/tvSatelliteCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:text=""
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llRouteRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginRight="9.0dip"
+        android:layout_marginTop="62.0dip"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/ivRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:contentDescription="@string/empty"
+            android:padding="3dp"
+            android:src="@drawable/record_selector" />
+
+        <ImageView
+            android:id="@+id/ivMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:contentDescription="@string/empty"
+            android:padding="3dp"
+            android:src="@drawable/map_selector" />
+
+        <ImageView
+            android:id="@+id/ivSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:contentDescription="@string/empty"
+            android:padding="3dp"
+            android:src="@drawable/send_selector" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llBottomBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/ivList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:contentDescription="@string/empty"
+            android:padding="3dp"
+            android:src="@drawable/list_selector" />
+        
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/llRouteList" 
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="@color/gpsInfoBackgroundColor" 
+        android:padding="6.0dip"
+        android:layout_margin="6.0dip"
+        android:visibility="gone" 
+        android:layout_width="match_parent" 
+        android:layout_height="300dp">
+        
+        <LinearLayout 
+            android:orientation="horizontal" 
+            android:id="@+id/llRouteHeader" 
+            android:background="@color/headerPressed_bg" 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content">
+            
+           
+            
+            <TextView 
+                android:textColor="@color/headerPressed_text_color" 
+                android:id="@+id/tvMyRoute" 
+                android:text="@string/myRoute" 
+                style="@style/TabHeaderStyle"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"  />
+            
+            <ImageView 
+                android:layout_gravity="start" 
+                android:id="@+id/ivRouteExit" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:src="@drawable/ic_close" 
+                android:contentDescription="@string/empty" /> 
+            
+        </LinearLayout>
+        
+        <ListView android:id="@+id/lvMyRoute" 
+            android:visibility="gone" 
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent" 
+            android:layout_marginTop="10.0dip" 
+            android:cacheColorHint="#00000000" 
+            android:divider="@android:drawable/divider_horizontal_dark" 
+         />
+
+
+        
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,55 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.simplegpstracker.ViewMapActivity" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+    
+        
+    <!--<item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_refresh"
+        android:showAsAction="always"
+        android:title="@string/action_refresh"/>-->
+        
+        <item
+        android:id="@+id/action_show_processed"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_show_processed"/>
+        
+        <item
+        android:id="@+id/action_show_kalman_g"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_kalman_g"/>
+        
+        <item
+        android:id="@+id/action_show_kalman_c"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_kalman_c"/>
+        
+        <item
+        android:id="@+id/action_show_marker"
+        android:icon="@drawable/ic_action_marker"
+        android:showAsAction="always"
+        android:title="@string/action_show_markers"/>
+        
+        <item
+        android:id="@+id/action_show_lines"
+        android:icon="@drawable/ic_action_lines"
+        android:showAsAction="always"
+        android:title="@string/action_show_lines"/>
+        
+        <item
+        android:id="@+id/action_show_kalman_t"
+        android:icon="@drawable/ic_action_k"
+        android:showAsAction="always"
+        android:title="@string/action_kalman_t"/>
+        
+
+</menu>

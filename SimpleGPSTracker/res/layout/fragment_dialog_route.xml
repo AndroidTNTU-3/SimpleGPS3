@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+    　<EditText 
+    android:id="@+id/etRouteName" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:layout_marginTop="15.0dip" 
+    android:minWidth="200.0dip" 
+    android:hint="@string/enter_route_name" 
+    android:inputType="textMultiLine" />
+    　
+　　 <CheckBox 
+    android:id="@+id/cbxSend" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:layout_marginTop="15.0dip" 
+    android:layout_marginBottom="15.0dip" 
+    android:checked="true" 
+    android:text="@string/send_hint" />
+　　
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="#aaa"
+            android:layout_alignParentTop="true"/>
+	
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+        
+        <Button 
+            android:id="@+id/btnMaybe" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:text="@string/maybe" 
+            android:padding="@dimen/button_dialog_padding"
+            android:layout_weight="1.0" 
+            android:background="@drawable/selector_transparent_button" />
+        
+        <View
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dip"
+            android:layout_marginBottom="4dip"
+            android:background="#aaa"/>
+        
+        <Button 
+            android:id="@+id/btnNo" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:padding="@dimen/button_dialog_padding"
+            android:text="@string/no" 
+            android:layout_weight="1.0" 
+            android:background="@drawable/selector_transparent_button"/>
+        
+        <View
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dip"
+            android:layout_marginBottom="4dip"
+            android:background="#aaa"/>
+        
+        <Button 
+            android:id="@+id/btnSave" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:padding="@dimen/button_dialog_padding"
+            android:text="@string/save" 
+            android:layout_weight="1.0" 
+            android:background="@drawable/selector_transparent_button" />
+    </LinearLayout>
+
+
+
+</LinearLayout>
