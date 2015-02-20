@@ -16,7 +16,7 @@ public class DialogSaveRoute extends DialogFragment{
 		    View v = inflater.inflate(R.layout.fragment_dialog_route, null);
 		    v.findViewById(R.id.btnSave).setOnClickListener(new MyListener());
 		    v.findViewById(R.id.btnNo).setOnClickListener(new MyListener());
-		    v.findViewById(R.id.btnMaybe).setOnClickListener(new MyListener());
+		    v.findViewById(R.id.btnBack).setOnClickListener(new MyListener());
 		    text = (EditText) v.findViewById(R.id.etRouteName);
 		    return v;
 		  }
@@ -32,9 +32,10 @@ public class DialogSaveRoute extends DialogFragment{
 			    	dismiss();
 			      break;
 			    case R.id.btnNo:
+			    	((MainActivity)getActivity()).StopRecord();
 			      dismiss();
 			      break;
-			    case R.id.btnMaybe:
+			    case R.id.btnBack:
 			    	dismiss();
 			      break;
 			    }

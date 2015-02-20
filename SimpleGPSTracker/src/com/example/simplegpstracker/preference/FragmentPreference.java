@@ -1,7 +1,11 @@
 package com.example.simplegpstracker.preference;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 import com.example.simplegpstracker.R;
 import com.example.simplegpstracker.R.array;
+import com.example.simplegpstracker.R.color;
 import com.example.simplegpstracker.R.string;
 
 import android.annotation.SuppressLint;
@@ -9,6 +13,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -17,6 +22,10 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
 @SuppressLint("NewApi")
@@ -33,7 +42,7 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
 	private String lineWidth;
 	private String kalman;
 	private String viewRoute;
-	
+		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,12 +55,34 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
 	
 	private void getPreferenceValue(){
 		preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		provider = preferences.getString("providers", "Network");
+
+		/*provider = preferences.getString("providers", "Network");
 		travelMode = preferences.getString("travelMode", "walking");
 		refreshTime = preferences.getString("refreshTime", "5");
 		lineWidth = preferences.getString("lineWidth", "4");
-		viewRoute = preferences.getString("viewRoute", "marker");
-		kalman = preferences.getString("kalman", "Off");
+		viewRoute = preferences.getString("viewRoute", "marker");				
+		kalman = preferences.getString("kalman", "Off");*/
+		
+		refreshTime = preferences.getString("refreshTime", "5");
+		lineWidth = preferences.getString("lineWidth", "4");
+		provider = getEntry(preferences.getString("providers", "Network"), 
+				R.array.location_provider, R.array.location_provider_value);
+		travelMode = getEntry(preferences.getString("travelMode", "walking"),
+				R.array.travel_mode, R.array.travel_mode_value);
+		viewRoute = getEntry(preferences.getString("viewRoute", "marker"),
+				R.array.view_route, R.array.view_route_value);
+		kalman = getEntry(preferences.getString("kalman", "Off"),
+				R.array.kalman_name, R.array.kalman_value);
+		
+	}
+	
+	private String getEntry(String preferenceValue, int arrayEntry, int arrayValue ){
+		String entry = null;
+		CharSequence[] entryes = context.getResources().getTextArray(arrayEntry);
+		CharSequence[] values = context.getResources().getTextArray(arrayValue);
+		int i = Arrays.asList(values).indexOf(preferenceValue);
+		entry = (String) entryes[i];
+		return entry;
 	}
 	
 	//1.Create PreferenceScreen
@@ -102,11 +133,12 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	ListPreference listPreference = new ListPreference(getActivity());
     	listPreference.setOnPreferenceChangeListener(this);
     	listPreference.setTitle(getResources().getString(R.string.providers_title));
-    	listPreference.setSummary(provider);
+    	Spannable coloredTitle = new SpannableString (provider);
+    	coloredTitle.setSpan( new ForegroundColorSpan(R.color.button_text_color_light), 0, coloredTitle.length(), 0 );
+    	listPreference.setSummary(coloredTitle);
     	listPreference.setKey(getResources().getString(R.string.providers_key));
     	listPreference.setEntries(R.array.location_provider);
     	listPreference.setEntryValues(R.array.location_provider_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -116,9 +148,8 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	listPreference.setTitle(getResources().getString(R.string.refresh_time_title));
     	listPreference.setSummary(refreshTime);
     	listPreference.setKey(getResources().getString(R.string.refresh_time_key));
-    	listPreference.setEntries(R.array.refresh_time);
+    	listPreference.setEntries(R.array.refresh_time_value);
     	listPreference.setEntryValues(R.array.refresh_time_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -130,7 +161,6 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	listPreference.setKey(getResources().getString(R.string.view_route_key));
     	listPreference.setEntries(R.array.view_route);
     	listPreference.setEntryValues(R.array.view_route_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -142,7 +172,6 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	listPreference.setKey(getResources().getString(R.string.travel_mode_key));
     	listPreference.setEntries(R.array.travel_mode);
     	listPreference.setEntryValues(R.array.travel_mode_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -154,7 +183,6 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	listPreference.setKey(getResources().getString(R.string.kalman_filter_key));
     	listPreference.setEntries(R.array.kalman_name);
     	listPreference.setEntryValues(R.array.kalman_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -164,9 +192,8 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
     	listPreference.setTitle(getResources().getString(R.string.line_width_title));
     	listPreference.setSummary(lineWidth);
     	listPreference.setKey(getResources().getString(R.string.line_width_key));
-    	listPreference.setEntries(R.array.line_width);
+    	listPreference.setEntries(R.array.line_width_value);
     	listPreference.setEntryValues(R.array.line_width_value);
-    	//listPreference.setOnPreferenceChangeListener(preferenceChangeListener);
     	return listPreference;
 	}
 	
@@ -198,14 +225,16 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
 
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object object) {
-		String value = object.toString().trim();
-	    String key = preference.getKey();
-	    Log.i("DEBUG:", key + " " + value);
+		//String value = object.toString().trim();
+	    //String key = preference.getKey();
+
+	    int i = ((ListPreference)preference).findIndexOfValue(object.toString());
+	    CharSequence[] entries = ((ListPreference)preference).getEntries();
+	    preference.setSummary(entries[i]);
 	    
-	   // if(key.equals(getResources().getString(R.string.refresh_time_key)))
-	    	//refreshTime = value;
-	    	preference.setSummary(value);
+	    	//preference.setSummary(((ListPreference) preference).getEntry());
 		return true;
 	}
+		
 	
 }

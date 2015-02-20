@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="location_provider">
+        <item>@string/gps</item>
+        <item>@string/network</item>
+        <item>@string/best_provider</item>
+    </string-array>
+    <string-array name="location_provider_value">
+        <item>"GPS"</item>
+        <item>"Network"</item>
+        <item>"Best provider"</item>
+    </string-array>
+    
+    <string-array name="view_route">
+        <item>@string/marker</item>
+        <item>@string/lines</item>
+        <item>@string/real_points</item>
+    </string-array>
+    <string-array name="view_route_value">
+        <item>"marker"</item>
+        <item>"line"</item>
+        <item>"realPoint"</item>
+    </string-array>
+    
+    <string-array name="refresh_time_value">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
+    
+    <string-array name="line_width_value">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+    </string-array>
+    
+    <string-array name="travel_mode">
+        <item>@string/driving</item>
+        <item>@string/walking</item>
+        <item>@string/bicycling</item>
+        <item>@string/transit</item>
+    </string-array>
+    <string-array name="travel_mode_value">
+        <item>"driving"</item>
+        <item>"walking"</item>
+        <item>"bicycling"</item>
+        <item>"transit"</item>
+    </string-array>
+              
+    <string-array name="kalman_name">
+        <item>@string/on</item>
+        <item>@string/off</item>
+    </string-array>
+    <string-array name="kalman_value">
+        <item>"on"</item>
+        <item>"off"</item>
+    </string-array>
+    
+</resources>

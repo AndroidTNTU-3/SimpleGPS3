@@ -9,14 +9,14 @@
             android:title="@string/providers" />
 
 	    <ListPreference
-	        android:entries="@array/refresh_time"
+	        android:entries="@array/refresh_time_value"
 	        android:entryValues="@array/refresh_time_value"
 	        android:key="refreshTime"
 	        android:summary="@string/summary_refresh_time"
 	        android:title="@string/refresh_time_title" />
 	    
 	    <ListPreference
-	        android:entries="@array/line_width"
+	        android:entries="@array/line_width_value"
 	        android:entryValues="@array/line_width_value"
 	        android:key="refreshTime"
 	        android:summary="@string/summary_line_width"

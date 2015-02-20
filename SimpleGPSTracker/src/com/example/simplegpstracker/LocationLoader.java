@@ -137,7 +137,10 @@ public class LocationLoader implements LocationListener, UnregisterCallBack{
 			}
 		//check if Network enable
 		} else if(providers.equals("Network")){
-			if(isNetworkEnabled) return true;
+			if(isNetworkEnabled) {
+				Log.i("DEBUG", " providersNETWORK true");
+				return true;
+			}
 			else{
 				Toast toast = Toast.makeText(context, context.getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
 				toast.show();

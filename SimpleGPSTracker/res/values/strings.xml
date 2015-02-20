@@ -41,7 +41,7 @@
     <string name="providers_title">Providers</string>
     <string name="summary_providers">Selection of provider</string>
     
-    <string name="refresh_time_title">Refresh</string>
+    <string name="refresh_time_title">Time refresh(s)</string>
     <string name="refresh_time_key">refreshTime</string>
     <string name="summary_refresh_time">Select refresh time</string>
     
@@ -71,8 +71,7 @@
     <string name="service_started">You must stop the service</string>
     <string name="status_enabled">Enabled</string>
     <string name="status_disabled">Disabled</string>
-    <string name="gps">GPS</string>
-    <string name="network">Network</string>
+
     <string name="accelerate">Accelerate</string>
     <string name="accelerate_value">m/s</string>
     <string name="orientation_x">Orientation X</string>
@@ -81,7 +80,7 @@
     
     <string name="save">Save</string>
     <string name="no">No</string>
-    <string name="maybe">Maybe</string>
+    <string name="back">Back</string>
     <string name="dialog_title_save">Maybe</string>
     <string name="dialog_message_save">Maybe</string>
     <string name="enter_route_name">Enter route name:</string>
@@ -107,71 +106,28 @@
     <string name="allert_map_title">Warning!</string>
 	<string name="allert_map_message">Please select a saved route or start recording.</string>
 	
-    <string-array name="location_provider">
-        <item>GPS</item>
-        <item>Network</item>
-        <item>Best provider</item>
+	<string name="gps">GPS</string>
+	<string name="network">Network</string>
+	<string name="best_provider">Best provider</string>
+	
+	<string name="marker">As markers</string>
+	<string name="lines">As lines</string>
+	<string name="real_points">As real point</string>	
+	
+	<string name="driving">driving</string>	   
+	<string name="walking">walking</string>	 
+    <string name="bicycling">bicycling</string>	
+    <string name="transit">transit</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>	
+    
+   	<string-array name="speed_unit">
+        <item>M/s</item>
+        <item>Km/h</item>
     </string-array>
-    <string-array name="location_provider_value">
-        <item>"GPS"</item>
-        <item>"Network"</item>
-        <item>"Best provider"</item>
-    </string-array>
-    <string-array name="view_route">
-        <item>As markers</item>
-        <item>As lines</item>
-        <item>As real point</item>
-    </string-array>
-    <string-array name="view_route_value">
-        <item>"marker"</item>
-        <item>"line"</item>
-        <item>"realPoint"</item>
-    </string-array>
-    <string-array name="refresh_time">
-        <item>1 second</item>
-        <item>2 second</item>
-        <item>5 second</item>
-        <item>10 second</item>
-    </string-array>
-    <string-array name="refresh_time_value">
-        <item>"1"</item>
-        <item>"2"</item>
-        <item>"5"</item>
-        <item>"10"</item>
-    </string-array>
-    <string-array name="line_width">
-        <item>2</item>
-        <item>4</item>
-        <item>6</item>
-        <item>8</item>
-        <item>10</item>
-   </string-array>
-   <string-array name="line_width_value">
-        <item>"2"</item>
-        <item>"4"</item>
-        <item>"6"</item>
-        <item>"8"</item>
-        <item>"10"</item>
-    </string-array>
-    <string-array name="travel_mode">
-        <item>driving</item>
-        <item>walking</item>
-        <item>bicycling</item>
-        <item>transit</item>
-    </string-array>
-    <string-array name="travel_mode_value">
-        <item>"driving"</item>
-        <item>"walking"</item>
-        <item>"bicycling"</item>
-        <item>"transit"</item>
-    </string-array>
-    <string-array name="kalman_name">
-        <item>On</item>
-        <item>Off</item>
-    </string-array>
-    <string-array name="kalman_value">
-        <item>"on"</item>
-        <item>"off"</item>
+    <string-array name="speed_unit_value">
+        <item>"ms"</item>
+        <item>"kmh"</item>
     </string-array>
 
     <string name="title_activity_test_map">TestMapActivity</string>

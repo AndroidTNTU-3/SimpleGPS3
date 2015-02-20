@@ -67,6 +67,7 @@ public class MainActivity extends FragmentActivity {
 	 * in milliseconds
 	 */
 	private final static int TIMER_TIME_REFRESH = 1000;
+	private final static int COLOR_ROUTE = Color.RED;;
 					
 	private SharedPreferences preferences;
 	private Editor editor;
@@ -101,13 +102,15 @@ public class MainActivity extends FragmentActivity {
 	ImageView ivList;
 	ImageView ivClose;
 	LinearLayout llListRoute;
-	ListView listView;
-	List<ListRouteParams> params;
+	private ListView listView;
+	private List<ListRouteParams> params;
 		
 	TextView tvSatelliteCount;
 	
 	LinearLayout progressLayout;
 	RouteAdapter routeAdapter;
+	
+	private boolean isRouteSaved = false;
 	
 	//List of point obtained from a sensor
 	private List<GPSInfo> list = null;
@@ -120,17 +123,17 @@ public class MainActivity extends FragmentActivity {
 	//Temporary list for point getting after screen rotation 
 	private List<GPSInfo> temp = null;
 	
-	GPSInfoHelper helper = null;
+	private GPSInfoHelper helper = null;
 	private LocationManager locationManager;
 	
 	private Handler h;	
 	private Context context;	
 	private Timer mTimer;
 	
-	Intent iStartService;
-	boolean bound;
+	private Intent iStartService;
+	private boolean bound;
 	
-    String selectedName;
+	private String selectedName;
 	
 	/*
 	 * 0: default
@@ -250,9 +253,8 @@ public class MainActivity extends FragmentActivity {
         		      
         this.registerReceiver(receiverProvider, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
         this.registerReceiver(reciverSatellite, new IntentFilter(Contract.SATELLITE_COUNT));
-        mapAdapter = new MapAdapter(map, context);
         
-		                 		 
+        mapAdapter = new MapAdapter(map, context);        		                 		 
 			
 		 /*if(UtilsNet.IsServiceRunning(context)){
 			 bindService(iStartService, sConn, getApplicationContext().BIND_AUTO_CREATE);
@@ -283,33 +285,14 @@ public class MainActivity extends FragmentActivity {
 			default:
 				break;
 			}
-
-	        	
-			 	/*if(routeDrawingMode == DRAWING_MODE_DB){		 	
-			 		temp = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
-			 		listRoutePoints = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
-			 	}
-			 	if(routeDrawingMode ==  DRAWING_MODE_NONE){		 	
-			 		temp = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
-			 		list = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
-			 	}*/
 			 	
-			 	if(temp != null){
-		    		for(GPSInfo info: temp){
-		    			drawPoly(new LatLng(info.getLatitude(), info.getLongitude()), Color.RED);
-		    		}
-		    	 }
-	        	Log.i("DEBUG SER:", "testValue" + savedInstanceState.getInt("routeDrivingMode"));
+			drawSavedRoute(temp);
 	        	
-	     }	 
-		 
-
+	     }	 		 
         
     }
     
-   
-    
-    
+         
     private class TimeDisplayTimerTask extends TimerTask{
 
 		@Override
@@ -333,21 +316,26 @@ public class MainActivity extends FragmentActivity {
         
     
     private void setMapView(){
-
-    	getStatus();
-    	//if(isGPSEnabled | isNetworkEnabled){
-    		//get current location
-    		//location = locationLoader.getLocation();
-    		
-    		if(location != null){
-    			Log.i("DEBUG:", "In MAP");
-    			map.setIndoorEnabled(true);
-    			map.setMyLocationEnabled(true);    			
-    			map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
-    		 //map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).icon(
-    			       // BitmapDescriptorFactory.defaultMarker()));
+ 		
+		if(location != null){
+			Log.i("DEBUG:", "In MAP");
+			map.setIndoorEnabled(true);
+			map.setMyLocationEnabled(true);    			
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
+		}
+		
+    }
+    
+    /*
+     * Drawing a route after reCreate activity
+     */
+    
+    private void drawSavedRoute(List<GPSInfo> tempList){
+    	if(tempList != null){
+    		for(GPSInfo info: tempList){
+    			drawPoly(new LatLng(info.getLatitude(), info.getLongitude()), COLOR_ROUTE);
     		}
-    	//}
+    	 }
     }
     
     private void drawPoly(LatLng point, int color){
@@ -470,8 +458,7 @@ public class MainActivity extends FragmentActivity {
     
     @Override
     protected void onResume(){
-    	super.onResume();
-    	
+    	super.onResume();    	
         //LocalBroadcastManager.getInstance(this).registerReceiver(receiverProvider, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
         //LocalBroadcastManager.getInstance(this).registerReceiver(reciverSatellite, new IntentFilter(SATELLITE_COUNT));
         getStatus();        
@@ -484,45 +471,34 @@ public class MainActivity extends FragmentActivity {
 		public void onClick(View view) {
 			int id = view.getId();
 			switch (id) {			
-			case R.id.ivRecord:				
-
-				routeDrawingMode = Contract.DRAWING_MODE_REAL;
-				
-		        if (!UtilsNet.IsServiceRunning(context)) {
-		            // Bind to LocalService	
-		        	ivStartStop.setImageResource(R.drawable.stop_selector);
-		            bindService(iStartService, sConn, Context.BIND_AUTO_CREATE);
-		            
-		            map.clear();
-		            startPoint = null;
-		            //
-		            mapAdapter.setRoute(null);
-		            
-		            Toast toast_start = Toast.makeText(context, context.getResources().getString(R.string.service_start), Toast.LENGTH_SHORT); 
-					toast_start.show(); 
-		        }
-		        else if(UtilsNet.IsServiceRunning(context)){
-		        	
-		        	routeDrawingMode = Contract.DRAWING_MODE_NONE;
-		        	
-		        	ivStartStop.setImageResource(R.drawable.record_selector);
-		        	
-		        	//get obtained a rout data to be stored in the database 
-		        	list = trackService.getList();
-		        	
-		        	trackService.stop();        	
-		        	unbindService(sConn);
-		        	
-		        	//set a points list to MapOnClick 
-		        	
-		        	mapAdapter.setRoute(list);
-		        	//???? maybe it is not necessary to do
-		        	//locationLoader.Unregister();
-		        	
-		        	if(list != null && list.size() > 2){
-		        		new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
-		        	}
-		        }		        		        
+			case R.id.ivRecord:		
+				Log.d("DEBUG:", "Click enabled" + locationLoader.IsProviderEnable());
+				if(locationLoader.IsProviderEnable()){
+					routeDrawingMode = Contract.DRAWING_MODE_REAL;
+					
+			        if (!UtilsNet.IsServiceRunning(context)) {
+			            // Bind to LocalService	
+			        	ivStartStop.setImageResource(R.drawable.stop_selector);
+			            bindService(iStartService, sConn, Context.BIND_AUTO_CREATE);
+			            
+			            map.clear();
+			            startPoint = null;
+			            //
+			            mapAdapter.setRoute(null);
+			            
+			            Toast toast_start = Toast.makeText(context, context.getResources().getString(R.string.service_start), Toast.LENGTH_SHORT); 
+						toast_start.show(); 
+			        }
+			        else if(UtilsNet.IsServiceRunning(context)){			        	
+			        	
+			        	//get obtained a rout data from a Service to be stored in the database 
+			        	list = trackService.getList();
+			        	
+			        	if(list != null && list.size() > 2){
+			        		new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
+			        	} 
+			        }
+				}
 				break;
 			case R.id.ivMap:
 				if(!UtilsNet.isOnline(getApplicationContext())){
@@ -546,11 +522,10 @@ public class MainActivity extends FragmentActivity {
 						startActivity(iMap);
 					}
 				}
-								
-				//new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
 				break;
 			case R.id.ivSend:
-				new Transmitter(context).send();				
+				//new Transmitter(context).send();	
+				new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
 				break;	
 			case R.id.ivList:
 				routeDrawingMode = Contract.DRAWING_MODE_DB;
@@ -574,7 +549,15 @@ public class MainActivity extends FragmentActivity {
     	
     }       
     
+    /*
+     *  CallBack from the DialoSaveRoute
+     *  If click the SAVE button in DialoSaveRoute:
+     *  1. Call stopping a Service
+     *  2. Save route to DB
+     */
     public void SaveRoute(String name){
+    	
+    	StopRecord();
     	
     	helper = new GPSInfoHelper(context);
     	routeName = name;
@@ -590,6 +573,26 @@ public class MainActivity extends FragmentActivity {
     	
     }
     
+    /*
+     * Stopping a Service
+     * If click the NO button in DialoSaveRoute:
+     * 1. Call stopping a Service
+     */
+    public void StopRecord(){
+    	routeDrawingMode = Contract.DRAWING_MODE_NONE;
+    	
+    	ivStartStop.setImageResource(R.drawable.record_selector);
+    	
+    	trackService.stop();        	
+    	unbindService(sConn);
+    	
+    	//set a points list to MapOnClick 
+    	
+    	mapAdapter.setRoute(list);
+    	//???? maybe it is not necessary to do
+    	//locationLoader.Unregister();
+    }
+    
 	public void EditRouteName(String name) {
 		helper = new GPSInfoHelper(context);
 		helper.updateRow(name, selectedName);
@@ -603,13 +606,14 @@ public class MainActivity extends FragmentActivity {
 			map.clear();
 			startPoint = null;
 			listRoutePoints = helper.getRoutePoints(params.get(position).getName());
-			//Log.i("DEBUG:", "route name:" + listRoute.get(position).getName());
 			llListRoute.setVisibility(View.INVISIBLE);	
 			LatLng point = null;
-	    	for(GPSInfo info: listRoutePoints){
+			
+			drawSavedRoute(listRoutePoints);
+	    	/*for(GPSInfo info: listRoutePoints){
 	    		point = new LatLng(info.getLatitude(), info.getLongitude());
 	    		drawPoly(point, Color.RED);
-	    	}
+	    	}*/
 	    	
 			mapAdapter.setRoute(listRoutePoints);
 		}
@@ -698,13 +702,8 @@ public class MainActivity extends FragmentActivity {
 		        trackService = mBinder.getService();
 		        
 		        temp = trackService.getList();
-		        if(temp != null){
-		    		for(GPSInfo info: temp){
-		    			drawPoly(new LatLng(info.getLatitude(), info.getLongitude()), Color.RED);
-		    		}
-		    	 }
-		        Log.i("DEBUG SER:", "service is" + trackService);
-			
+		        drawSavedRoute(temp);
+		        			
 		}			
 	 };
 

@@ -34,7 +34,7 @@
     <string name="providers_title">Провайдери</string>
     <string name="summary_providers">Вибір провайдера розташування</string>
     
-    <string name="refresh_time_title">Час оновлення</string>
+    <string name="refresh_time_title">Час оновлення(c)</string>
     <string name="refresh_time_key">refreshTime</string>
     <string name="summary_refresh_time">Період оновлення</string>
     
@@ -57,8 +57,6 @@
     
     <string name="status_enabled">Увімкнено</string>
     <string name="status_disabled">Вимкнено</string>
-    <string name="gps">GPS</string>
-    <string name="network">Мережа</string>
     
     <string name="accelerate">Прискорення</string>
     <string name="accelerate_value">м/с</string>
@@ -82,62 +80,21 @@
     
     <string name="allert_map_title">Попередження!</string>
 	<string name="allert_map_message">Виберить будь-ласка записаний шлях або почніть запис.</string>
-
-    <string-array name="location_provider">
-        <item>GPS</item>
-        <item>Network</item>
-        <item>Best provider</item>
-    </string-array>
-    <string-array name="location_provider_value">
-        <item>"GPS"</item>
-        <item>"Network"</item>
-        <item>"Best provider"</item>
-    </string-array>
+	
+	<string name="gps">GPS</string>
+	<string name="network">Network</string>
+	<string name="best_provider">Best provider</string>
+	
+	<string name="marker">Маркер</string>
+	<string name="lines">Лінія</string>
+	<string name="real_points">Реальні значення</string>
+	
+	<string name="driving">автомобіль</string>	   
+	<string name="walking">пішки</string>	 
+    <string name="bicycling">велосипед</string>	
+    <string name="transit">громадський транспорт</string>	
     
-    <string-array name="view_route">
-      	<item>Маркер</item>
-       	<item>Лінія</item>
-        <item>Реальні значення</item>
-    </string-array>
-    <string-array name="view_route_value">
-        <item>"marker"</item>
-        <item>"line"</item>
-        <item>"realPoint"</item>
-    </string-array>
-
-	<string-array name="refresh_time">
-        <item>1 секунда</item>
-        <item>2 секунди</item>
-        <item>5 секунд</item>
-        <item>10 секунд</item>
-    </string-array>  
-    <string-array name="refresh_time_value">
-        <item>"1"</item>
-        <item>"2"</item>
-        <item>"5"</item>
-        <item>"10"</item>
-    </string-array>
-    
-   <string-array name="travel_mode">
-        <item>driving</item>
-        <item>walking</item>
-        <item>bicycling</item>
-        <item>transit</item>
-    </string-array>  
-    <string-array name="travel_mode_value">
-        <item>"driving"</item>
-        <item>"walking"</item>
-        <item>"bicycling"</item>
-        <item>"transit"</item>
-    </string-array>
-    
-   	<string-array name="kalman_name">
-        <item>Увімкнуто</item>
-        <item>Вимкнуто</item>
-    </string-array>
-    <string-array name="kalman_value">
-        <item>"on"</item>
-        <item>"off"</item>
-    </string-array>
+    <string name="on">увімкнуто</string>
+    <string name="off">вимкнуто</string>	
 
 </resources>

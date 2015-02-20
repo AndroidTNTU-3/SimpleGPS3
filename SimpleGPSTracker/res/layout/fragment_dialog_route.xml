@@ -36,10 +36,10 @@
         android:orientation="horizontal" >
         
         <Button 
-            android:id="@+id/btnMaybe" 
+            android:id="@+id/btnBack" 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
-            android:text="@string/maybe" 
+            android:text="@string/back" 
             android:padding="@dimen/button_dialog_padding"
             android:layout_weight="1.0" 
             android:background="@drawable/selector_transparent_button" />
