@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.simplegpstracker.db.GPSInfoHelper;
 import com.example.simplegpstracker.entity.GPSInfo;
+import com.example.simplegpstracker.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -25,12 +27,17 @@ public class MapAdapter {
 	
 	private GoogleMap map;
 	private Context context;
+	private SharedPreferences preferences;
 	private List<GPSInfo> listRoutePoints;
 	private List<LatLng> listLatLngPoints;
 	private LatLng destPointInfo;
 	private GPSInfo destInfo = null;
 	private GPSInfoHelper helper = null;
 	private Marker marker;
+	
+	private String speedUnitValue;
+	private String speedUnitEntry;
+	
 	TextView tvLat;
 	TextView tvLng;
 	TextView tvAccel;
@@ -40,6 +47,16 @@ public class MapAdapter {
 		this.map = map;
 		this.context = context;
 		helper = new GPSInfoHelper(context);
+		initMap();
+	}
+	
+	MapAdapter(GoogleMap map, Context context, SharedPreferences preferences){
+		this.map = map;
+		this.context = context;
+		this.preferences = preferences;
+		helper = new GPSInfoHelper(context);
+		speedUnitEntry = Utils.getEntry(preferences.getString("speedUnit", "ms"), 
+				R.array.speed_unit, R.array.speed_unit_value, context);
 		initMap();
 	}
 	
@@ -86,7 +103,7 @@ public class MapAdapter {
                 tvAccel.setText(context.getResources().getString(R.string.accelerate) + ": " + df.format(destInfo.getAcceleration()) 
                 		+ " " + context.getResources().getString(R.string.accelerate_value));
                 tvSpeed.setText(context.getResources().getString(R.string.speed) + ": " + df.format(destInfo.getSpeed()) 
-                		+ " " + context.getResources().getString(R.string.speed_entry_kmh));            
+                		+ " " + speedUnitEntry);            
                 
 				return v;
 			}

@@ -2,6 +2,7 @@ package com.example.simplegpstracker;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +25,12 @@ public class RouteAdapter extends BaseAdapter {
 	private List<ListRouteParams> params;
 	private Context context;
 	private SharedPreferences preferences;
-	private String speedUnit;
-	private String distanceUnit;
-	private double koefSpeed = 1.0;
+	private String speedUnitValue;
+	private String distanceUnitValue;
+	private String speedUnitEntry;
+	private String distanceUnitEntry;
 	private double koefDistance = 1.0;
+	private double koefSpeed = 1.0;
 	private String speed;
 	private String distance;
 	
@@ -36,28 +39,42 @@ public class RouteAdapter extends BaseAdapter {
 		this.params = params;
 		this.context= context;
 		this.preferences = preferences;
+		getPreference();
+	}
+	
+	private void getPreference(){
+		distanceUnitValue = preferences.getString("distanceUnit", "m");
+		speedUnitValue = preferences.getString("speedUnit", "ms");
+		distanceUnitEntry = getEntry(distanceUnitValue, R.array.distance_unit, R.array.distance_unit_value);
+		speedUnitEntry = getEntry(speedUnitValue, R.array.speed_unit, R.array.speed_unit_value);
+	}
+	
+	private String getEntry(String preferenceValue, int arrayEntry, int arrayValue ){
+		String entry = null;
+		CharSequence[] entryes = context.getResources().getTextArray(arrayEntry);
+		CharSequence[] values = context.getResources().getTextArray(arrayValue);
+		int i = Arrays.asList(values).indexOf(preferenceValue); 
+		entry = (String) entryes[i];
+		return entry;
 	}
 	
 	private String getDistance(float distance){
 		DecimalFormat dfd;
-		distanceUnit = preferences.getString("distanceUnit", "m");
-		Log.i("DEBUGP:", "adapter dist" + distanceUnit); 
-		if(distanceUnit.equals("km")) {
+		if(distanceUnitValue.equals("km")) {
 			koefDistance = 0.001;
 			dfd = new DecimalFormat("#.###");
 		}else dfd = new DecimalFormat("0");
-		return String.valueOf(dfd.format(distance*koefSpeed));
+		return String.valueOf(dfd.format(distance*koefDistance));
 	}
 	
 	private String getSpeed(double speed){
 		
-		speedUnit = preferences.getString("speedUnit", "ms");
-		Log.i("DEBUGP:", "adapter speed" + speedUnit); 
-		if(speedUnit.equals("kmh")) koefSpeed = 1000/60*60;
+		if(speedUnitValue.equals("kmh")) koefSpeed = 60*60*0.001;
 		DecimalFormat df = new DecimalFormat("#.##");
-		
 		return String.valueOf(df.format(speed*koefSpeed));
 	}
+	
+	
 
 	@Override
 	public int getCount() {
@@ -103,8 +120,8 @@ public class RouteAdapter extends BaseAdapter {
 		vh.startTime.setText(" " + params.get(position).getStartTime());
 		vh.stopTime.setText(" " + params.get(position).getStopTime());
 		vh.duration.setText(" " + params.get(position).getDuration());
-		vh.averageSpeed.setText(" " + getSpeed(params.get(position).getAverageSpeed()) + " " + speedUnit);
-		vh.distance.setText(" " + getDistance(params.get(position).getDistance()) + " " + distanceUnit);
+		vh.averageSpeed.setText(" " + getSpeed(params.get(position).getAverageSpeed()) + " " + speedUnitEntry);
+		vh.distance.setText(" " + getDistance(params.get(position).getDistance()) + " " + distanceUnitEntry);
 
 		return convertView;
 	}

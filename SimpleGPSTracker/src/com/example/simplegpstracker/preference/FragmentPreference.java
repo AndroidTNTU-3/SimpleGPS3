@@ -94,12 +94,7 @@ public class FragmentPreference extends PreferenceFragment implements OnPreferen
 		String entry = null;
 		CharSequence[] entryes = context.getResources().getTextArray(arrayEntry);
 		CharSequence[] values = context.getResources().getTextArray(arrayValue);
-		for(CharSequence v: entryes){
-			 Log.i("DEBUG:", "value" + v); 
-		}
-		Log.i("DEBUG:", "preference value" + preferenceValue); 
-		int i = Arrays.asList(values).indexOf(preferenceValue);
-		Log.i("DEBUG:", "preference index" + i); 
+		int i = Arrays.asList(values).indexOf(preferenceValue); 
 		entry = (String) entryes[i];
 		return entry;
 	}

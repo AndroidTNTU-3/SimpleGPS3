@@ -1,9 +1,12 @@
 package com.example.simplegpstracker.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import android.content.Context;
 
 public class Utils {
 	
@@ -67,6 +70,22 @@ public class Utils {
 		String formatted = df.format(date );
 		
 		return formatted;
+	}
+	
+	/** 
+	 Get entry from xml array
+	 
+	 @param PreferenceValue in String.
+	 @return Entry in string.
+	
+	*/
+	public static String getEntry(String preferenceValue, int arrayEntry, int arrayValue, Context context){
+		String entry = null;
+		CharSequence[] entryes = context.getResources().getTextArray(arrayEntry);
+		CharSequence[] values = context.getResources().getTextArray(arrayValue);
+		int i = Arrays.asList(values).indexOf(preferenceValue); 
+		entry = (String) entryes[i];
+		return entry;
 	}
 	
 	

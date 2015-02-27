@@ -22,6 +22,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -70,6 +73,7 @@ public class MainActivity extends FragmentActivity {
 	private final static int COLOR_ROUTE = Color.RED;;
 					
 	private SharedPreferences preferences;
+	NotificationManager nm;
 	private Editor editor;
 	private String provider;
 	private String travelMode;
@@ -620,6 +624,23 @@ public class MainActivity extends FragmentActivity {
 			mapAdapter.setRoute(listRoutePoints);
 		}
     } 
+    
+    void sendNotif() {
+		 nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		    Notification notif = new Notification(R.drawable.ic_launcher, "MediaPlayer", 
+		      System.currentTimeMillis());
+		    
+		    Intent intent = new Intent(this, MainActivity.class);
+		    intent.putExtra("stations", "");
+		    PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		    
+		    notif.setLatestEventInfo(this, "RadioPlayer", "das", pIntent);
+		    
+		    notif.flags |= Notification.FLAG_AUTO_CANCEL;
+		    
+		    nm.notify(1, notif);
+		    
+		  }
     
     protected void onSaveInstanceState(Bundle outState) {
       
