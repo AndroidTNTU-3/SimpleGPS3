@@ -15,6 +15,20 @@
 	        android:summary="@string/summary_refresh_time"
 	        android:title="@string/refresh_time_title" />
 	    
+	   	<ListPreference
+	        android:entries="@array/speed_unit"
+	        android:entryValues="@array/speed_unit_value"
+	        android:key="speed_unit_key"
+	        android:summary="@string/summary_speed_unit"
+	        android:title="@string/speed_unit_title" />
+	   	
+	   	<ListPreference
+	        android:entries="@array/distance_unit"
+	        android:entryValues="@array/distance_unit_value"
+	        android:key="distance_unit_key"
+	        android:summary="@string/summary_distance_unit"
+	        android:title="@string/distance_unit_title" />
+	    
 	    <ListPreference
 	        android:entries="@array/line_width_value"
 	        android:entryValues="@array/line_width_value"

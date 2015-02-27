@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
@@ -24,7 +25,9 @@ public class PathJSONParser {
 		JSONArray jRoutes = null;
 		JSONArray jLegs = null;
 		JSONArray jSteps = null;
+		
 		try {
+			if (jObject.getString("status").equalsIgnoreCase("OK")){ 
 			jRoutes = jObject.getJSONArray("routes");
 			/** Traversing all routes */
 			for (int i = 0; i < jRoutes.length(); i++) {
@@ -61,6 +64,9 @@ public class PathJSONParser {
 					}
 					routes.add(path);
 				}
+			}
+			}else{
+				return null;
 			}
 
 		} catch (JSONException e) {

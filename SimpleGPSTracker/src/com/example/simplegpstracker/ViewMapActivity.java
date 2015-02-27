@@ -453,7 +453,7 @@ public class ViewMapActivity extends FragmentActivity implements PointAdapterCal
 			processedHelper.insert(infoProcessed);
 		}
 		//newPoints = points;
-		drawOnMap(points);
+		if(points.size() != 0) drawOnMap(points);
 	}
 	
 	private void drawOnMap(ArrayList<LatLng> points){

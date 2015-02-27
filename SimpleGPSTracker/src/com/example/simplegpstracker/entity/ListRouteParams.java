@@ -6,8 +6,8 @@ public class ListRouteParams {
 	String startTime;
 	String stopTime;
 	String duration;
-	String averageSpeed;
-	String distance;
+	double averageSpeed;
+	float distance;
 	
 	public String getName() {
 		return name;
@@ -33,16 +33,16 @@ public class ListRouteParams {
 	public void setDuration(String duration) {
 		this.duration = duration;
 	}
-	public String getAverageSpeed() {
+	public double getAverageSpeed() {
 		return averageSpeed;
 	}
-	public void setAverageSpeed(String averageSpeed) {
+	public void setAverageSpeed(double averageSpeed) {
 		this.averageSpeed = averageSpeed;
 	}
-	public String getDistance() {
+	public float getDistance() {
 		return distance;
 	}
-	public void setDistance(String distance) {
+	public void setDistance(float distance) {
 		this.distance = distance;
 	}		
 

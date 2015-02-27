@@ -50,6 +50,24 @@
         <item>"bicycling"</item>
         <item>"transit"</item>
     </string-array>
+    
+    <string-array name="speed_unit">
+        <item>@string/speed_entry_ms</item>
+        <item>@string/speed_entry_kmh</item>
+    </string-array>
+    <string-array name="speed_unit_value">
+        <item>"ms"</item>
+        <item>"kmh"</item>
+    </string-array>
+    
+    <string-array name="distance_unit">
+        <item>@string/distance_entry_m</item>
+        <item>@string/distance_entry_km</item>
+    </string-array>
+    <string-array name="distance_unit_value">
+        <item>"m"</item>
+        <item>"km"</item>
+    </string-array>
               
     <string-array name="kalman_name">
         <item>@string/on</item>

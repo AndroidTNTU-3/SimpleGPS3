@@ -141,7 +141,7 @@ public class PointAdapter implements PoliLoaderCallBack{
 		double templat = 0;
 		double templng = 0;
 		points = new ArrayList<LatLng>();
-
+		if(routes != null && routes.size() != 0){
 		for (int i = 0; i < routes.size(); i++) {
 
 			List<HashMap<String, String>> path = routes.get(i);
@@ -171,6 +171,7 @@ public class PointAdapter implements PoliLoaderCallBack{
 				
 		}
 		pointAdapterCallBack.drawPoli(points);
+		}
 		iter++;
 		if(iter == partListCount) pointAdapterCallBack.isLoadFinished();
 	}

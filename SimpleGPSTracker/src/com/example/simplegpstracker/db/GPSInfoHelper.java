@@ -246,11 +246,11 @@ public class GPSInfoHelper extends BaseDao{
     	for(GPSInfo info: list){
     		averageSpeed += info.getSpeed();
     	}
-    	DecimalFormat df = new DecimalFormat("#.##");
+    	
     	averageSpeed = averageSpeed/list.size();
-    	param.setAverageSpeed(String.valueOf(df.format(averageSpeed)));
-    	DecimalFormat dfd = new DecimalFormat("0");
-    	param.setDistance(String.valueOf(dfd.format(getDistance(list))));
+    	param.setAverageSpeed(averageSpeed);
+    	
+    	param.setDistance(getDistance(list));
 		
 		return param;
     }

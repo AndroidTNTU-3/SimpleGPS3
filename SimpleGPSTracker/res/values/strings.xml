@@ -33,6 +33,7 @@
     <string name="dialog_warning_message_gps">GPS not enabled. Enable GPS or Network</string>
     
     <string name="title_pref_location">Location parameters</string>
+    <string name="title_pref_unit">Units</string>
     <string name="title_pref_route">Route</string>
     <string name="title_pref_addition">Addition</string>
     
@@ -44,6 +45,14 @@
     <string name="refresh_time_title">Time refresh(s)</string>
     <string name="refresh_time_key">refreshTime</string>
     <string name="summary_refresh_time">Select refresh time</string>
+    
+    <string name="speed_unit_title">Speed unit</string>
+    <string name="speed_unit_key">speedUnit</string>
+    <string name="summary_speed_unit">Select speed unit</string>
+    
+    <string name="distance_unit_title">Distance unit</string>
+    <string name="distance_unit_key">distanceUnit</string>
+    <string name="summary_distance_unit">Select distance unit</string>
     
     <string name="line_width_title">Line width</string>
     <string name="line_width_key">lineWidth</string>
@@ -93,8 +102,6 @@
     <string name="speed">Speed:</string>
     <string name="from">From:</string>
     <string name="to">To:</string>
-    <string name="speed_value">m/s</string>
-    <string name="distance_value">m</string>
     
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
@@ -121,14 +128,11 @@
     <string name="on">On</string>
     <string name="off">Off</string>	
     
-   	<string-array name="speed_unit">
-        <item>M/s</item>
-        <item>Km/h</item>
-    </string-array>
-    <string-array name="speed_unit_value">
-        <item>"ms"</item>
-        <item>"kmh"</item>
-    </string-array>
+   	<string name="speed_entry_ms">m/s</string>
+    <string name="speed_entry_kmh">km/h</string>
+    
+    <string name="distance_entry_m">m</string>
+    <string name="distance_entry_km">km</string>
 
     <string name="title_activity_test_map">TestMapActivity</string>
    	<string name="myRoute">My routes</string>

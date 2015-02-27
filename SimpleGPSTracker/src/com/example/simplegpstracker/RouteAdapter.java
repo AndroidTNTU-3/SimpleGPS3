@@ -1,5 +1,6 @@
 package com.example.simplegpstracker;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,9 @@ import com.example.simplegpstracker.entity.ListRouteParams;
 import com.example.simplegpstracker.utils.Utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +23,40 @@ public class RouteAdapter extends BaseAdapter {
 	
 	private List<ListRouteParams> params;
 	private Context context;
+	private SharedPreferences preferences;
+	private String speedUnit;
+	private String distanceUnit;
+	private double koefSpeed = 1.0;
+	private double koefDistance = 1.0;
+	private String speed;
+	private String distance;
 	
 	
-	RouteAdapter(List<ListRouteParams> params, Context context){
+	RouteAdapter(List<ListRouteParams> params, Context context, SharedPreferences preferences){
 		this.params = params;
 		this.context= context;
+		this.preferences = preferences;
+	}
+	
+	private String getDistance(float distance){
+		DecimalFormat dfd;
+		distanceUnit = preferences.getString("distanceUnit", "m");
+		Log.i("DEBUGP:", "adapter dist" + distanceUnit); 
+		if(distanceUnit.equals("km")) {
+			koefDistance = 0.001;
+			dfd = new DecimalFormat("#.###");
+		}else dfd = new DecimalFormat("0");
+		return String.valueOf(dfd.format(distance*koefSpeed));
+	}
+	
+	private String getSpeed(double speed){
+		
+		speedUnit = preferences.getString("speedUnit", "ms");
+		Log.i("DEBUGP:", "adapter speed" + speedUnit); 
+		if(speedUnit.equals("kmh")) koefSpeed = 1000/60*60;
+		DecimalFormat df = new DecimalFormat("#.##");
+		
+		return String.valueOf(df.format(speed*koefSpeed));
 	}
 
 	@Override
@@ -71,8 +103,8 @@ public class RouteAdapter extends BaseAdapter {
 		vh.startTime.setText(" " + params.get(position).getStartTime());
 		vh.stopTime.setText(" " + params.get(position).getStopTime());
 		vh.duration.setText(" " + params.get(position).getDuration());
-		vh.averageSpeed.setText(" " + params.get(position).getAverageSpeed() + " " + context.getResources().getString(R.string.speed_value));
-		vh.distance.setText(" " + params.get(position).getDistance() + " " + context.getResources().getString(R.string.distance_value));
+		vh.averageSpeed.setText(" " + getSpeed(params.get(position).getAverageSpeed()) + " " + speedUnit);
+		vh.distance.setText(" " + getDistance(params.get(position).getDistance()) + " " + distanceUnit);
 
 		return convertView;
 	}

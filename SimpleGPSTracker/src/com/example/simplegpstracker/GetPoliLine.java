@@ -102,6 +102,7 @@ public class GetPoliLine {
 		protected void onPostExecute(List<List<HashMap<String, String>>> routes) {
 
 			//send routes to ViewMapActivity
+			
 			poliLoaderCallBack.setPoli(routes);
 		}
 	}

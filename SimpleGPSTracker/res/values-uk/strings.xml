@@ -26,6 +26,7 @@
      <string name="dialog_warning_title">Попередження</string>
      
     <string name="title_pref_location">Параметри місцеположення</string>
+    <string name="title_pref_unit">Одиниці виміру</string>
     <string name="title_pref_route">Шлях</string>
     <string name="title_pref_addition">Додатково</string>
     
@@ -33,6 +34,12 @@
     <string name="providers_key">providers</string>
     <string name="providers_title">Провайдери</string>
     <string name="summary_providers">Вибір провайдера розташування</string>
+    
+    <string name="speed_unit_title">Одиниці швидкості</string>
+    <string name="summary_speed_unit">Вибір одиниць швидкості</string>
+    
+    <string name="distance_unit_title">Одиниці дистанції</string>
+    <string name="summary_distance_unit">Вибір одиниць дистанції</string>
     
     <string name="refresh_time_title">Час оновлення(c)</string>
     <string name="refresh_time_key">refreshTime</string>
@@ -73,8 +80,6 @@
     <string name="distance">Дист.:</string>
     <string name="average_speed">Швид.:</string>
     <string name="speed">Швидкість:</string>
-    <string name="speed_value">м/с</string>
-    <string name="distance_value">м</string>
     <string name="from">Від:</string>
     <string name="to">До:</string>
     
@@ -92,7 +97,13 @@
 	<string name="driving">автомобіль</string>	   
 	<string name="walking">пішки</string>	 
     <string name="bicycling">велосипед</string>	
-    <string name="transit">громадський транспорт</string>	
+    <string name="transit">громадський транспорт</string>
+    
+    <string name="speed_entry_ms">м/с</string>
+    <string name="speed_entry_kmh">км/г</string>
+    
+    <string name="distance_entry_m">м</string>
+    <string name="distance_entry_km">км</string>
     
     <string name="on">увімкнуто</string>
     <string name="off">вимкнуто</string>	

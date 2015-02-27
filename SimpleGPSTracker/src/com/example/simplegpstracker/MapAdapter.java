@@ -86,7 +86,7 @@ public class MapAdapter {
                 tvAccel.setText(context.getResources().getString(R.string.accelerate) + ": " + df.format(destInfo.getAcceleration()) 
                 		+ " " + context.getResources().getString(R.string.accelerate_value));
                 tvSpeed.setText(context.getResources().getString(R.string.speed) + ": " + df.format(destInfo.getSpeed()) 
-                		+ " " + context.getResources().getString(R.string.speed_value));            
+                		+ " " + context.getResources().getString(R.string.speed_entry_kmh));            
                 
 				return v;
 			}

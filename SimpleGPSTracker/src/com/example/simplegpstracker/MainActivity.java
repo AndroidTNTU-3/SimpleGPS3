@@ -360,7 +360,7 @@ public class MainActivity extends FragmentActivity {
 		params = helper.getListParams();
 				
 		if(params != null){
-			routeAdapter = new RouteAdapter(params, context);
+			routeAdapter = new RouteAdapter(params, context, preferences);
 			listView.setAdapter(routeAdapter);
 			return true;
 		}
@@ -369,10 +369,11 @@ public class MainActivity extends FragmentActivity {
        
     private void getPreferences(){
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        provider = preferences.getString("providers", "Network");
+       /* provider = preferences.getString("providers", "Network");
         travelMode = preferences.getString("travelMode", "walking");
-        refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"));
+        refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"));*/
         lineWidth = Integer.parseInt(preferences.getString("lineWidth", "4"));
+        Log.i("DEBUG:", "distanceUnit" + preferences.getString("distanceUnit", "m"));
     }
     
     private void getStatus(){
@@ -461,6 +462,7 @@ public class MainActivity extends FragmentActivity {
     	super.onResume();    	
         //LocalBroadcastManager.getInstance(this).registerReceiver(receiverProvider, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
         //LocalBroadcastManager.getInstance(this).registerReceiver(reciverSatellite, new IntentFilter(SATELLITE_COUNT));
+    	//getPreferences();
         getStatus();        
       
     }
@@ -496,7 +498,7 @@ public class MainActivity extends FragmentActivity {
 			        	
 			        	if(list != null && list.size() > 2){
 			        		new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
-			        	} 
+			        	} else StopRecord();
 			        }
 				}
 				break;
