@@ -17,4 +17,11 @@ public class Contract {
 	//Receiver
 	static final public String SATELLITE_COUNT= "com.example.simplegpstracker.satellitecount";
 	
+
+	/*
+	 * Send obtained data to server
+	 * If checkBox in DialogSaveRoute enable
+	 */
+	static final public int SEND_TO_SERVER_OFF = 0;
+	static final public int SEND_TO_SERVER_ON = 1;
 }

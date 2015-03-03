@@ -33,11 +33,13 @@ public class Transmitter {
 	Context context;
 	private String json;
 	private String urlServer;
+	private List<GPSInfo> list;
 	
 	private SharedPreferences preferences;
 	
-	Transmitter(Context context){
+	Transmitter(List<GPSInfo> list, Context context){
 		this.context = context;
+		this.list = list;
 		//get a server URL from preference
 		preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		//test server
@@ -57,10 +59,10 @@ public class Transmitter {
 	private String getJson(){
 		//get waypoints from DB
 		//convert to json by Gson
-		GPSInfoHelper helper = new GPSInfoHelper(context);
+		/*GPSInfoHelper helper = new GPSInfoHelper(context);
 	    List<GPSInfo> list = new ArrayList<GPSInfo>();
 	    list = helper.getGPSPoint();
-	    helper.closeDB();
+	    helper.closeDB();*/
 	    json = new Gson().toJson(list);
 	    return json;
 	}

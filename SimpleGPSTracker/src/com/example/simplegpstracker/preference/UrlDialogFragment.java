@@ -47,7 +47,7 @@ public class UrlDialogFragment extends DialogFragment{
 			if(id == R.id.button_set_url){
 				preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			    Editor ed = preferences.edit();
-			    ed.putString("url", tv.getText().toString());
+			    ed.putString(getString(R.string.url_server_key), tv.getText().toString());
 			    ed.commit();
 			    dismiss();
 			}

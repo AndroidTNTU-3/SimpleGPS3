@@ -31,6 +31,7 @@
     <string name="dialog_warning_button_ok">ОК</string>
     <string name="dialog_warning_message_net">Network not enabled. Enable Network or GPS</string>
     <string name="dialog_warning_message_gps">GPS not enabled. Enable GPS or Network</string>
+    <string name="notif_content_text">A route is recorded</string>
     
     <string name="title_pref_location">Location parameters</string>
     <string name="title_pref_unit">Units</string>

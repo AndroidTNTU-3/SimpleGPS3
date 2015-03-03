@@ -19,6 +19,7 @@
      <string name="message_base_empty">Немає данних місцеположення</string>
      <string name="message_no_saved_route">Немає записаних шляхів</string>
      <string name="myRoute">Мої шляхи</string>
+     <string name="notif_content_text">Шлях записується</string>
      
     <string name="action_show_markers">Маркер</string>
     <string name="action_show_lines">Лінії</string>

@@ -14,6 +14,7 @@ import com.example.simplegpstracker.db.GPSInfoHelper;
 import com.example.simplegpstracker.db.KalmanInfoHelper;
 import com.example.simplegpstracker.entity.GPSInfo;
 import com.example.simplegpstracker.kalman.KalmanManager;
+import com.google.android.gms.maps.model.CameraPosition;
 
 import android.app.Activity;
 import android.app.Service;
@@ -77,6 +78,8 @@ public class TrackService extends Service {
 	KalmanManager km;
 	
 	List<GPSInfo> list;
+	
+	CameraPosition cp = null;
     
     @Override
     public IBinder onBind(Intent intent) {
@@ -249,6 +252,14 @@ public class TrackService extends Service {
     	return list;
     }
     
+    public void setCameraPosition(CameraPosition cameraPosition){
+    	cp = cameraPosition;
+    }
+    
+    public CameraPosition getCameraPosition(){
+    	return cp;
+    }
+    
     public void stop(){
         locationLoader.Unregister();
         sensor.Unregister();
@@ -259,6 +270,7 @@ public class TrackService extends Service {
   	public void setCallBack(UnregisterCallBack unregisterCallBack) {
   		this.unregisterCallBack = unregisterCallBack;
   	}
+  	
     
     public void onDestroy() {
         super.onDestroy();

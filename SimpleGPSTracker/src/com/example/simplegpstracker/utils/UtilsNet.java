@@ -29,7 +29,7 @@ public class UtilsNet {
 	
 	public static boolean IsServiceRunning(Context context) {
 		 
-        ActivityManager manager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
  
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if ("com.example.simplegpstracker.TrackService".equals(service.service.getClassName())) {

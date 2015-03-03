@@ -18,7 +18,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -42,6 +44,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -70,13 +73,15 @@ public class MainActivity extends FragmentActivity {
 	 * in milliseconds
 	 */
 	private final static int TIMER_TIME_REFRESH = 1000;
-	private final static int COLOR_ROUTE = Color.RED;;
+	private final static int COLOR_ROUTE = Color.RED;
+	private static final int NOTIFY_ID = 101;
 					
 	private SharedPreferences preferences;
-	NotificationManager nm;
+	NotificationManager notificationManager;
 	private Editor editor;
 	private String provider;
 	private String travelMode;
+	private String urlServer;
 	private int refreshTime;
 	private int lineWidth;
 	private String status;
@@ -138,7 +143,7 @@ public class MainActivity extends FragmentActivity {
 	private boolean bound;
 	
 	private String selectedName;
-	
+	LatLngBounds bounds = null;
 	/*
 	 * 0: default
 	 * 1: route drawing is RealTime
@@ -146,7 +151,8 @@ public class MainActivity extends FragmentActivity {
 	 */
 	private int routeDrawingMode = Contract.DRAWING_MODE_NONE;
 		
-
+	CameraPosition cameraPosition;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,7 +179,10 @@ public class MainActivity extends FragmentActivity {
         registerForContextMenu(listView);
         
         //After rotate screen service maybe is a running state
-        if(UtilsNet.IsServiceRunning(context)) ivStartStop.setImageResource(R.drawable.stop_selector);
+        /*if(UtilsNet.IsServiceRunning(context)) {
+        	ivStartStop.setImageResource(R.drawable.stop_selector);
+        	notificationManager.cancel(NOTIFY_ID);
+        }*/
 
         tvSatelliteCount = (TextView) findViewById(R.id.tvSatelliteCount);
         
@@ -185,6 +194,23 @@ public class MainActivity extends FragmentActivity {
     	
 		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
 		map = mapFragment.getMap();  
+		
+		map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+	        @Override
+	        public void onMapLoaded() {
+	        	/*if(bounds != null){
+	        		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 10);
+			        map.animateCamera(cameraUpdate);
+	        	}*/
+	        	if(cameraPosition != null){
+		        	Log.i("DEBUG SER:", "In camerapos");
+		        	CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+		        	//map.animateCamera(cameraUpdate);
+		            map.moveCamera(cameraUpdate);
+		            
+		        }
+	        }
+		});
 		
 		/*
 		  * We will using this Handler when the app is first running and GPS or Network is not enabled.
@@ -260,7 +286,7 @@ public class MainActivity extends FragmentActivity {
         
         mapAdapter = new MapAdapter(map, context);        		                 		 
 			
-		 /*if(UtilsNet.IsServiceRunning(context)){
+		/* if(UtilsNet.IsServiceRunning(context)){
 			 bindService(iStartService, sConn, getApplicationContext().BIND_AUTO_CREATE);
 		 }*/
 		 
@@ -273,8 +299,8 @@ public class MainActivity extends FragmentActivity {
 
 		 if (savedInstanceState != null) {
 	        	
-			routeDrawingMode = savedInstanceState.getInt("routeDrivingMode");
-			 
+		    routeDrawingMode = savedInstanceState.getInt("routeDrivingMode");
+
 			switch (routeDrawingMode) {
 			case Contract.DRAWING_MODE_DB:
 		 		temp = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
@@ -319,10 +345,9 @@ public class MainActivity extends FragmentActivity {
     }
         
     
-    private void setMapView(){
+    private synchronized void setMapView(){
  		
 		if(location != null){
-			Log.i("DEBUG:", "In MAP");
 			map.setIndoorEnabled(true);
 			map.setMyLocationEnabled(true);    			
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
@@ -376,6 +401,7 @@ public class MainActivity extends FragmentActivity {
        /* provider = preferences.getString("providers", "Network");
         travelMode = preferences.getString("travelMode", "walking");
         refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"));*/
+        urlServer = preferences.getString(getString(R.string.url_server_key), "");
         lineWidth = Integer.parseInt(preferences.getString("lineWidth", "4"));
         Log.i("DEBUG:", "distanceUnit" + preferences.getString("distanceUnit", "m"));
     }
@@ -452,11 +478,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
       super.onStart();
+  		iStartService = new Intent(context, TrackService.class);
       
-      iStartService = new Intent(context, TrackService.class);
       if(UtilsNet.IsServiceRunning(context)){
-		 getApplicationContext();
+		getApplicationContext();
 		bindService(iStartService, sConn, Context.BIND_AUTO_CREATE);
+    	ivStartStop.setImageResource(R.drawable.stop_selector);
+    	//notificationManager.cancel(NOTIFY_ID);
       }      
       
     }
@@ -467,8 +495,9 @@ public class MainActivity extends FragmentActivity {
         //LocalBroadcastManager.getInstance(this).registerReceiver(receiverProvider, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
         //LocalBroadcastManager.getInstance(this).registerReceiver(reciverSatellite, new IntentFilter(SATELLITE_COUNT));
     	//getPreferences();
-        getStatus();        
-      
+        getStatus();
+        //If you don't do it, drawing starts from a first route point.
+        startPoint = null;
     }
 
     private class ClickListener implements OnClickListener{
@@ -478,15 +507,16 @@ public class MainActivity extends FragmentActivity {
 			int id = view.getId();
 			switch (id) {			
 			case R.id.ivRecord:		
-				Log.d("DEBUG:", "Click enabled" + locationLoader.IsProviderEnable());
+
 				if(locationLoader.IsProviderEnable()){
 					routeDrawingMode = Contract.DRAWING_MODE_REAL;
 					
 			        if (!UtilsNet.IsServiceRunning(context)) {
 			            // Bind to LocalService	
 			        	ivStartStop.setImageResource(R.drawable.stop_selector);
+			            startService(iStartService);
 			            bindService(iStartService, sConn, Context.BIND_AUTO_CREATE);
-			            
+
 			            map.clear();
 			            startPoint = null;
 			            //
@@ -507,7 +537,7 @@ public class MainActivity extends FragmentActivity {
 				}
 				break;
 			case R.id.ivMap:
-				if(!UtilsNet.isOnline(getApplicationContext())){
+				if(!UtilsNet.isOnline(context)){
 					Toast toast = Toast.makeText(context, context.getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
 					toast.show();				
 				}else if(UtilsNet.IsServiceRunning(context)){
@@ -530,7 +560,14 @@ public class MainActivity extends FragmentActivity {
 				}
 				break;
 			case R.id.ivSend:
-				//new Transmitter(context).send();	
+				/*
+				 * ??????
+				 * listRoutePoints - route points from db
+				 * list - route points from service
+				 * if you don't checked the checkBox on map is showing routes from list
+				 * if you press a button "send" listRoutePoints = list and it will send to server 
+				 */
+				//new Transmitter(context, listRoutePoints).send();	
 				new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
 				break;	
 			case R.id.ivList:
@@ -561,7 +598,7 @@ public class MainActivity extends FragmentActivity {
      *  1. Call stopping a Service
      *  2. Save route to DB
      */
-    public void SaveRoute(String name){
+    public void SaveRoute(String name, int sendToServer){
     	
     	StopRecord();
     	
@@ -575,7 +612,17 @@ public class MainActivity extends FragmentActivity {
     	for(GPSInfo info: list){
 			info.setName(routeName);
 			helper.insert(info);
-		}   	
+		}
+    	
+    	if(sendToServer == Contract.SEND_TO_SERVER_ON && !urlServer.isEmpty()){
+    		new Transmitter(list, context).send();
+    	}
+    	
+    	//?????? 
+    	/* I don't know it is true
+    	 * it is for send to server if it necessary 
+    	 */
+    	list = listRoutePoints;
     	
     }
     
@@ -589,9 +636,9 @@ public class MainActivity extends FragmentActivity {
     	
     	ivStartStop.setImageResource(R.drawable.record_selector);
     	
-    	trackService.stop();        	
+    	trackService.stop();
+    	stopService(iStartService);
     	unbindService(sConn);
-    	
     	//set a points list to MapOnClick 
     	
     	mapAdapter.setRoute(list);
@@ -625,22 +672,30 @@ public class MainActivity extends FragmentActivity {
 		}
     } 
     
-    void sendNotif() {
-		 nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		    Notification notif = new Notification(R.drawable.ic_launcher, "MediaPlayer", 
-		      System.currentTimeMillis());
+    private void createNotification() {
+    	
+    	notificationManager  = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		 
+		long when = System.currentTimeMillis();
+
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+			    
+		Intent notificationIntent = new Intent(this, MainActivity.class);
+		notificationIntent.putExtra("stations", "");
+		PendingIntent pIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		    
-		    Intent intent = new Intent(this, MainActivity.class);
-		    intent.putExtra("stations", "");
-		    PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		    
-		    notif.setLatestEventInfo(this, "RadioPlayer", "das", pIntent);
-		    
-		    notif.flags |= Notification.FLAG_AUTO_CANCEL;
-		    
-		    nm.notify(1, notif);
-		    
-		  }
+	    builder.setSmallIcon(R.drawable.ic_launcher).
+	    setTicker("Tracker start").
+	    setContentIntent(pIntent).
+	    setWhen(when).
+	    setAutoCancel(true).
+	    setContentTitle(context.getResources().getString(R.string.app_name)).
+	    setContentText(context.getResources().getString(R.string.notif_content_text));
+
+	    Notification notification = builder.build();
+
+	    notificationManager.notify(NOTIFY_ID, notification);
+	}
     
     protected void onSaveInstanceState(Bundle outState) {
       
@@ -650,7 +705,7 @@ public class MainActivity extends FragmentActivity {
         	outState.putParcelableArrayList("arrayOfRoutes", (ArrayList<? extends Parcelable>) list);
         
         	outState.putInt("routeDrivingMode", routeDrawingMode);
-        	
+			Log.i("DEBUG SER:", "MODE " + routeDrawingMode);
        super.onSaveInstanceState(outState);
     }
 
@@ -669,6 +724,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onPause() {
   	  	super.onPause();
+  	  Log.i("DEBUG SER:", "On pause");
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverProvider);
       	//LocalBroadcastManager.getInstance(this).unregisterReceiver(reciverSatellite);
 
@@ -684,6 +740,11 @@ public class MainActivity extends FragmentActivity {
         	editor.putString("lastLocationLng", String.valueOf(location.getLongitude()));
         	editor.commit();
         }
+        if(UtilsNet.IsServiceRunning(context)){
+        	Log.i("DEBUG SER:", "Service is Running");
+        	trackService.setCameraPosition(map.getCameraPosition());
+        	unbindService(sConn);
+        }else Log.i("DEBUG SER:", "Service is Stopped");
         
     }
     
@@ -704,6 +765,10 @@ public class MainActivity extends FragmentActivity {
     	if(llListRoute.isShown()) {
     		llListRoute.setVisibility(View.INVISIBLE);
     	}
+    	else if(UtilsNet.IsServiceRunning(context)){
+    		createNotification();
+    		finish();
+    	}
     	else {
            finish();            
         }
@@ -712,7 +777,7 @@ public class MainActivity extends FragmentActivity {
     ServiceConnection sConn = new ServiceConnection() {       	
 	    
 	    public void onServiceDisconnected(ComponentName name) {
-	        Log.d("DEBUG SER:", "MainActivity onServiceDisconnected");
+	        Log.i("DEBUG SER:", "MainActivity onServiceDisconnected");
 	        bound = false;
 	        trackService = null;
 	    }
@@ -721,10 +786,32 @@ public class MainActivity extends FragmentActivity {
 		public void onServiceConnected(ComponentName component, IBinder binder) {
 			bound = true;
 			 Log.i("DEBUG SER:", "MainActivity onServiceConnected");
+			 
 			 	LocalBinder mBinder = (LocalBinder) binder;
 		        trackService = mBinder.getService();
-		        
+		        cameraPosition = trackService.getCameraPosition();
 		        temp = trackService.getList();
+		        if(temp != null && temp.size() > 2){
+		        	
+		       
+		        LatLng southern = new LatLng(temp.get(0).getLatitude(), temp.get(0).getLongitude());
+		        LatLng northern = new LatLng(temp.get(temp.size() - 1).getLatitude(), temp.get(temp.size() - 1).getLongitude());
+		        if(southern.latitude > northern.latitude){
+		        	LatLng temp = northern;
+		        	northern = southern;
+		        	southern = temp;
+		        }
+		        bounds = new LatLngBounds(southern, northern);
+		        /*try{CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(
+		                new LatLngBounds(start, stop),
+		                10);
+		            map.animateCamera(cameraUpdate);
+		            map.getCameraPosition();
+		        }catch(IllegalArgumentException e){
+		        	e.setStackTrace(null);
+		        }*/
+		        }
+		        
 		        drawSavedRoute(temp);
 		        			
 		}			
