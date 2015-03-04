@@ -284,7 +284,7 @@ public class MainActivity extends FragmentActivity {
         this.registerReceiver(receiverProvider, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
         this.registerReceiver(reciverSatellite, new IntentFilter(Contract.SATELLITE_COUNT));
         
-        mapAdapter = new MapAdapter(map, context);        		                 		 
+        mapAdapter = new MapAdapter(map, context, preferences);        		                 		 
 			
 		/* if(UtilsNet.IsServiceRunning(context)){
 			 bindService(iStartService, sConn, getApplicationContext().BIND_AUTO_CREATE);
@@ -403,7 +403,6 @@ public class MainActivity extends FragmentActivity {
         refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"));*/
         urlServer = preferences.getString(getString(R.string.url_server_key), "");
         lineWidth = Integer.parseInt(preferences.getString("lineWidth", "4"));
-        Log.i("DEBUG:", "distanceUnit" + preferences.getString("distanceUnit", "m"));
     }
     
     private void getStatus(){
@@ -522,7 +521,7 @@ public class MainActivity extends FragmentActivity {
 			            //
 			            mapAdapter.setRoute(null);
 			            
-			            Toast toast_start = Toast.makeText(context, context.getResources().getString(R.string.service_start), Toast.LENGTH_SHORT); 
+			            Toast toast_start = Toast.makeText(context, getResources().getString(R.string.record_start), Toast.LENGTH_SHORT); 
 						toast_start.show(); 
 			        }
 			        else if(UtilsNet.IsServiceRunning(context)){			        	
@@ -538,10 +537,10 @@ public class MainActivity extends FragmentActivity {
 				break;
 			case R.id.ivMap:
 				if(!UtilsNet.isOnline(context)){
-					Toast toast = Toast.makeText(context, context.getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
+					Toast toast = Toast.makeText(context, getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
 					toast.show();				
 				}else if(UtilsNet.IsServiceRunning(context)){
-					Toast toast = Toast.makeText(context, context.getResources().getString(R.string.service_started), Toast.LENGTH_SHORT); 
+					Toast toast = Toast.makeText(context, getResources().getString(R.string.service_started), Toast.LENGTH_SHORT); 
 					toast.show();
 				}else{
 					Intent iMap = new Intent(context, ViewMapActivity.class);
@@ -567,8 +566,12 @@ public class MainActivity extends FragmentActivity {
 				 * if you don't checked the checkBox on map is showing routes from list
 				 * if you press a button "send" listRoutePoints = list and it will send to server 
 				 */
-				//new Transmitter(context, listRoutePoints).send();	
-				new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
+				if(UtilsNet.isOnline(context)) new Transmitter(listRoutePoints, context).send();
+				else {
+					Toast toast = Toast.makeText(context, getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
+					toast.show();
+				}
+				//new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
 				break;	
 			case R.id.ivList:
 				routeDrawingMode = Contract.DRAWING_MODE_DB;

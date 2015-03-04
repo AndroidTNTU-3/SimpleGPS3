@@ -37,6 +37,7 @@ public class MapAdapter {
 	
 	private String speedUnitValue;
 	private String speedUnitEntry;
+	private double koefSpeed = 1.0;
 	
 	TextView tvLat;
 	TextView tvLng;
@@ -55,13 +56,21 @@ public class MapAdapter {
 		this.context = context;
 		this.preferences = preferences;
 		helper = new GPSInfoHelper(context);
-		speedUnitEntry = Utils.getEntry(preferences.getString("speedUnit", "ms"), 
+		speedUnitValue = preferences.getString("speedUnit", "ms");
+		speedUnitEntry = Utils.getEntry(speedUnitValue, 
 				R.array.speed_unit, R.array.speed_unit_value, context);
 		initMap();
 	}
 	
 	public void setRoute(List<GPSInfo> listRoutePoints){
 		this.listRoutePoints = listRoutePoints;
+	}
+	
+	private String getSpeed(double speed){
+		
+		if(speedUnitValue.equals("kmh")) koefSpeed = 60*60*0.001;
+		DecimalFormat df = new DecimalFormat("#.##");
+		return String.valueOf(df.format(speed*koefSpeed));
 	}
 	
 	private void initMap(){
@@ -102,7 +111,7 @@ public class MapAdapter {
         		DecimalFormat df = new DecimalFormat("#.##");
                 tvAccel.setText(context.getResources().getString(R.string.accelerate) + ": " + df.format(destInfo.getAcceleration()) 
                 		+ " " + context.getResources().getString(R.string.accelerate_value));
-                tvSpeed.setText(context.getResources().getString(R.string.speed) + ": " + df.format(destInfo.getSpeed()) 
+                tvSpeed.setText(context.getResources().getString(R.string.speed) + ": " + getSpeed(destInfo.getSpeed()) 
                 		+ " " + speedUnitEntry);            
                 
 				return v;

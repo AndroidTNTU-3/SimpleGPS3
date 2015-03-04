@@ -63,6 +63,8 @@
     <string name="service_stop">Сервіс зупинено</string>
     <string name="service_started">Ви повинні зупинити сервіс</string>
     
+   	<string name="record_start">Запис розпочато</string>
+    <string name="record_stop">Запис зупинено</string>
     <string name="status_enabled">Увімкнено</string>
     <string name="status_disabled">Вимкнено</string>
     

@@ -280,7 +280,7 @@ public class TrackService extends Service {
         //prevention of memory leak
         //mHandler.removeCallbacksAndMessages(null);
         
-		Toast toast_stop = Toast.makeText(context, context.getResources().getString(R.string.service_stop), Toast.LENGTH_SHORT);
+		Toast toast_stop = Toast.makeText(context, context.getResources().getString(R.string.record_stop), Toast.LENGTH_SHORT);
 		toast_stop.show();
         Log.d("DEBUG", "MyService onDestroy");
       }
