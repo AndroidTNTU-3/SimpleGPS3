@@ -13,6 +13,7 @@ public class Contract {
 	static final public int DRAWING_MODE_NONE = 0;
 	static final public int DRAWING_MODE_REAL = 1;
 	static final public int DRAWING_MODE_DB = 2;
+	static final public int DRAWING_MODE_PROCESSED_ROUTE = 3;
 	
 	//Receiver
 	static final public String SATELLITE_COUNT= "com.example.simplegpstracker.satellitecount";

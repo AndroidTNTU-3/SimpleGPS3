@@ -79,11 +79,15 @@ public class MainActivity extends FragmentActivity {
 	private SharedPreferences preferences;
 	NotificationManager notificationManager;
 	private Editor editor;
+	
+	//Prefernces
 	private String provider;
+	private String viewRouteParameter;
 	private String travelMode;
 	private String urlServer;
 	private int refreshTime;
 	private int lineWidth;
+	
 	private String status;
 	private String routeName;
 	
@@ -104,6 +108,7 @@ public class MainActivity extends FragmentActivity {
 	private PolylineOptions polylineOptions;
 	
 	private MapAdapter mapAdapter;
+	private DirectionsAdapter dAdapter;
 	
 	ImageView ivMap;
 	ImageView ivStartStop;
@@ -123,6 +128,9 @@ public class MainActivity extends FragmentActivity {
 	
 	//List of point obtained from a sensor
 	private List<GPSInfo> list = null;
+	
+	//List of point obtained from a Google Directions
+	private List<GPSInfo> processedWayPoints = null;
 		
 	private List<GPSInfo> listRoute;
 	
@@ -312,6 +320,12 @@ public class MainActivity extends FragmentActivity {
 		 		list = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
 		 		mapAdapter.setRoute(list);
 				break;
+			case Contract.DRAWING_MODE_PROCESSED_ROUTE:
+				temp = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
+	        	Log.i("DEBUGA:", "SIZEr " + temp.size());
+	        	processedWayPoints = savedInstanceState.getParcelableArrayList("arrayOfRoutes");
+		 		//mapAdapter.setRoute(list);
+				break;
 			default:
 				break;
 			}
@@ -362,16 +376,15 @@ public class MainActivity extends FragmentActivity {
     private void drawSavedRoute(List<GPSInfo> tempList){
     	if(tempList != null){
     		for(GPSInfo info: tempList){
-    			drawPoly(new LatLng(info.getLatitude(), info.getLongitude()), COLOR_ROUTE);
+    			drawPoly(new LatLng(info.getLatitude(), info.getLongitude()), COLOR_ROUTE);          		
     		}
     	 }
     }
     
     private void drawPoly(LatLng point, int color){
    		endPoint = point;
-   		Log.i("DEBUG:", "point" + "lat: " + point.latitude + "lon:" + point.longitude);
     	if(startPoint != null){
-    		
+       		//Log.i("DEBUG:", "point" + "lat: " + point.latitude + "lon:" + point.longitude);
     		map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(point.latitude, point.longitude)));
     		polylineOptions = new PolylineOptions().width(lineWidth).color(color);
     		polylineOptions.add(startPoint, endPoint);
@@ -401,6 +414,7 @@ public class MainActivity extends FragmentActivity {
        /* provider = preferences.getString("providers", "Network");
         travelMode = preferences.getString("travelMode", "walking");
         refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"));*/
+        viewRouteParameter = preferences.getString(getString(R.string.view_route_key), "lines");
         urlServer = preferences.getString(getString(R.string.url_server_key), "");
         lineWidth = Integer.parseInt(preferences.getString("lineWidth", "4"));
     }
@@ -528,7 +542,7 @@ public class MainActivity extends FragmentActivity {
 			        	
 			        	//get obtained a rout data from a Service to be stored in the database 
 			        	list = trackService.getList();
-			        	
+
 			        	if(list != null && list.size() > 2){
 			        		new DialogSaveRoute().show(getSupportFragmentManager(), "DialogSaveRoute");
 			        	} else StopRecord();
@@ -536,6 +550,7 @@ public class MainActivity extends FragmentActivity {
 				}
 				break;
 			case R.id.ivMap:
+
 				if(!UtilsNet.isOnline(context)){
 					Toast toast = Toast.makeText(context, getResources().getString(R.string.network_off), Toast.LENGTH_SHORT); 
 					toast.show();				
@@ -543,18 +558,23 @@ public class MainActivity extends FragmentActivity {
 					Toast toast = Toast.makeText(context, getResources().getString(R.string.service_started), Toast.LENGTH_SHORT); 
 					toast.show();
 				}else{
-					Intent iMap = new Intent(context, ViewMapActivity.class);
+					//Intent iMap = new Intent(context, ViewMapActivity.class);
+					dAdapter = new DirectionsAdapter(map, context, preferences);
 					if(routeDrawingMode == Contract.DRAWING_MODE_NONE){
-						if(list != null && list.size() < 2)
-						new DialogMapAllert().show(getSupportFragmentManager(), "DialogMapAllert");
-						else {
-							iMap.putParcelableArrayListExtra("pointsList", (ArrayList<? extends Parcelable>) list);
-							startActivity(iMap);
+						if(list != null && list.size() > 2){
+							/*iMap.putParcelableArrayListExtra("pointsList", (ArrayList<? extends Parcelable>) list);
+							startActivity(iMap);*/
+							routeDrawingMode = Contract.DRAWING_MODE_PROCESSED_ROUTE;
+							dAdapter.compute(list);
+						}else {
+							new DialogMapAllert().show(getSupportFragmentManager(), "DialogMapAllert");
 						}
 					} else if(routeDrawingMode == Contract.DRAWING_MODE_DB){
 						if(listRoutePoints != null && listRoutePoints.size() > 2)
-						iMap.putParcelableArrayListExtra("pointsList", (ArrayList<? extends Parcelable>) listRoutePoints);
-						startActivity(iMap);
+						/*iMap.putParcelableArrayListExtra("pointsList", (ArrayList<? extends Parcelable>) listRoutePoints);
+						startActivity(iMap);*/
+							routeDrawingMode = Contract.DRAWING_MODE_PROCESSED_ROUTE;
+							dAdapter.compute(listRoutePoints);
 					}
 				}
 				break;
@@ -625,7 +645,8 @@ public class MainActivity extends FragmentActivity {
     	/* I don't know it is true
     	 * it is for send to server if it necessary 
     	 */
-    	list = listRoutePoints;
+    	if(listRoutePoints != null)
+    		list = listRoutePoints;
     	
     }
     
@@ -706,9 +727,15 @@ public class MainActivity extends FragmentActivity {
         	outState.putParcelableArrayList("arrayOfRoutes", (ArrayList<? extends Parcelable>) listRoutePoints);
         if(routeDrawingMode == Contract.DRAWING_MODE_NONE)
         	outState.putParcelableArrayList("arrayOfRoutes", (ArrayList<? extends Parcelable>) list);
+        if(routeDrawingMode == Contract.DRAWING_MODE_PROCESSED_ROUTE){
+        	if(dAdapter != null)
+        		processedWayPoints = dAdapter.getProcessedWayPoints();
+        	if(processedWayPoints != null)
+        		outState.putParcelableArrayList("arrayOfRoutes", (ArrayList<? extends Parcelable>) processedWayPoints);
+        }
         
         	outState.putInt("routeDrivingMode", routeDrawingMode);
-			Log.i("DEBUG SER:", "MODE " + routeDrawingMode);
+			Log.i("DEBUGA:", "MODE " + routeDrawingMode);
        super.onSaveInstanceState(outState);
     }
 
