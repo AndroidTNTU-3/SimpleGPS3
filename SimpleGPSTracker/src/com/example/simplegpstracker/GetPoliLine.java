@@ -1,22 +1,24 @@
 package com.example.simplegpstracker;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.HttpStatus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Network;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -24,70 +26,89 @@ import android.util.Log;
 //Get response from the google server and parse a json data
 ////////////////////////////////////
 public class GetPoliLine {
+			
+	Context context;
+	
+	private static GetPoliLine instance;
 	
 	public static interface PoliLoaderCallBack{
 		public void setPoli(List<List<HashMap<String, String>>> routes);
 	}
 	
 	PoliLoaderCallBack poliLoaderCallBack;
+    private static RequestQueue queue = null;
+    
+    private GetPoliLine(Context context){
+    	this.context = context;
+    	queue = getQueue(context);   	
+    }
+     
+    public static synchronized GetPoliLine getInstance(Context context) {
+        if (instance == null) {
+        	instance = new GetPoliLine(context);
+        }
+        return instance;
+    }	
 	
-	public void start(String url){
-		new HttpConnection().execute(url);
-	}
+	public void buildRequest(String url, final int partListCount){
+		StringRequest jsonObjRequest = new StringRequest(Request.Method.GET, url,
+				 new Response.Listener<String>() {
 
-	private class HttpConnection extends AsyncTask<String, Void, String>{
+					@Override
+					public void onResponse(String response) {
+						//Log.d("DEBUG:", response.toString());
+						//longInfo(response.toString());
+						Log.d("DEBUG:", response.toString());
+						
+						//jsonobject1 = response;
+						new ParserData(partListCount).execute(response);
+						
+					}
+				}, new Response.ErrorListener() {
 
-		@Override
-		protected String doInBackground(String... arg) {
-			String data = "";
-			InputStream iStream = null;
-			HttpURLConnection urlConnection = null;
-			try {
-				URL url = new URL(arg[0]);
-				urlConnection = (HttpURLConnection) url.openConnection();
-				urlConnection.connect();
-				iStream = urlConnection.getInputStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						iStream));
-				StringBuffer sb = new StringBuffer();
-				String line = "";
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-				data = sb.toString();
-				br.close();
-			} catch (Exception e) {
-				Log.d("Exception while reading url", e.toString());
-			} finally {
-				try {
-					if(iStream != null)
-					iStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				urlConnection.disconnect();
-			}
-			return data;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			Log.i("DEBUG", " In HttpConnection");
-			new ParserData().execute(result);
-			
-		}
-	}
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						// TODO Auto-generated method stub
+						/*NetworkResponse networkResponse = error.networkResponse;
+						final int status = networkResponse.statusCode;
+						Log.d("DEBUGA:", "status:" + status);*/
+						
+					}					        
+
+				}	
+		);
+		//jsonObjRequest.setRetryPolicy(new DefaultRetryPolicy(4 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		queue.add(jsonObjRequest);
+	}	
+	
+	public static synchronized RequestQueue getQueue(Context ctx) {
+        if (queue == null) {
+            //queue = Volley.newRequestQueue(ctx.getApplicationContext());
+            queue = RequestQueueFactory.createSingleRequestQueue(ctx, null);
+        }
+        return queue;
+    }
+	
+	public void longInfo(String str) {
+        if(str.length() > 4000) {
+            Log.i("",str.substring(0, 4000));
+            longInfo(str.substring(4000));
+        } else
+            Log.i("",str);
+    } 
+
 	
 	private class ParserData extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>>{
+		int count;
+		ParserData(int count){
+			this.count = count;
+		}
 
 		@Override
 		protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 			// TODO Auto-generated method stub
-			JSONObject jObject;
 			List<List<HashMap<String, String>>> routes = null;
-
+			JSONObject jObject;
 			try {
 				jObject = new JSONObject(jsonData[0]);
 				PathJSONParser parser = new PathJSONParser();
@@ -102,7 +123,7 @@ public class GetPoliLine {
 		protected void onPostExecute(List<List<HashMap<String, String>>> routes) {
 
 			//send routes to ViewMapActivity
-			
+			Log.d("DEBUGA:", "count_asynk_end: " + String.valueOf(count) + "-------------------");
 			poliLoaderCallBack.setPoli(routes);
 		}
 	}

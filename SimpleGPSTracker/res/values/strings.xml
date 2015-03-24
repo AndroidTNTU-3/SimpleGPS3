@@ -99,7 +99,7 @@
     <string name="send_hint">Send data to server</string>
     <string name="time_start">Time start: </string>
     <string name="time_stop">Time stop: </string>
-    <string name="duration">Duration:</string>
+    <string name="duration">Durat.:</string>
     <string name="distance">Distance:</string>
     <string name="average_speed">Speed:</string>
     <string name="speed">Speed:</string>

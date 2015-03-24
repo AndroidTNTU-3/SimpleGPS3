@@ -1,5 +1,6 @@
 package com.example.simplegpstracker.utils;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -9,6 +10,9 @@ import java.util.TimeZone;
 import android.content.Context;
 
 public class Utils {
+	
+	private static double koefDistance = 1.0;
+	private static double koefSpeed = 1.0;
 	
 	/** 
 	 Get time in format yyyy/MM/dd HH:mm:ss.
@@ -75,7 +79,9 @@ public class Utils {
 	/** 
 	 Get entry from xml array
 	 
-	 @param PreferenceValue in String.
+	 @param preferenceValue in String.
+	 @param arrayEntry in int.
+	 @param arrayValue in int.
 	 @return Entry in string.
 	
 	*/
@@ -86,6 +92,31 @@ public class Utils {
 		int i = Arrays.asList(values).indexOf(preferenceValue); 
 		entry = (String) entryes[i];
 		return entry;
+	}
+	
+	
+	/** 
+	 Get entry from xml array
+	 
+	 @param distance in float.
+	 @param distanceUnitValue in string.
+	 @return Entry in string.
+	
+	*/
+	public static String getFormattedDistance(float distance, String distanceUnitValue){
+		DecimalFormat dfd;
+		if(distanceUnitValue.equals("km")) {
+			koefDistance = 0.001;
+			dfd = new DecimalFormat("#.###");
+		}else dfd = new DecimalFormat("0");
+		return String.valueOf(dfd.format(distance*koefDistance));
+	}
+	
+	public static String getFormattedSpeed(double speed, String speedUnitValue){
+		
+		if(speedUnitValue.equals("kmh")) koefSpeed = 60*60*0.001;
+		DecimalFormat df = new DecimalFormat("#.##");
+		return String.valueOf(df.format(speed*koefSpeed));
 	}
 	
 	

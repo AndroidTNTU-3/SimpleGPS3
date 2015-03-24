@@ -1,22 +1,18 @@
 package com.example.simplegpstracker;
 
-import java.security.Provider;
-import java.text.SimpleDateFormat;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.simplegpstracker.GetPoliLine.PoliLoaderCallBack;
 import com.example.simplegpstracker.db.GPSInfoHelper;
 import com.example.simplegpstracker.db.KalmanInfoHelper;
 import com.example.simplegpstracker.entity.GPSInfo;
 import com.example.simplegpstracker.kalman.KalmanManager;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.example.simplegpstracker.utils.Utils;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -29,9 +25,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /////////////////////////////////////
@@ -62,9 +55,21 @@ public class TrackService extends Service {
     private Timer mTimer = null;
     
     //count of satellite
-    int count = 0;
+    private int count = 0;
     
-    private boolean providerReady = false;
+    //count of obtained data
+    private int countRecords = 0;
+    
+    //a overall speed and a distance
+    private double speed = 0.0;
+    private String speedUnitValue;
+    private String speedUnitEntry;
+    private String distanceUnitValue;
+    private String distanceUnitEntry;
+    
+	private Location startPoint = null;
+	private Location endPoint = null;	
+	private float distance = 0;
     
     GPSInfoHelper helper;
     KalmanInfoHelper kalmanHelper;
@@ -76,10 +81,8 @@ public class TrackService extends Service {
     private final IBinder mBinder = new LocalBinder();
     
 	KalmanManager km;
-	
-	List<GPSInfo> list;
-	
-	CameraPosition cp = null;
+		
+	private List<GPSInfo> list;
     
     @Override
     public IBinder onBind(Intent intent) {
@@ -101,12 +104,15 @@ public class TrackService extends Service {
     @Override
     public void onCreate() {
         // cancel if already existed
+        context = getApplicationContext();
     	preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     	refreshTime = Integer.parseInt(preferences.getString("refreshTime", "5"))  * 1000;
+    	speedUnitValue = preferences.getString("speedUnit", "ms");
+    	speedUnitEntry = Utils.getEntry(speedUnitValue, R.array.speed_unit, R.array.speed_unit_value, context);
+    	distanceUnitValue = preferences.getString("distanceUnit", "m");
+    	distanceUnitEntry = Utils.getEntry(distanceUnitValue, R.array.distance_unit, R.array.distance_unit_value, context);
     	providers = preferences.getString("providers", "Network");
-    	
-        context = getApplicationContext();
-        
+       
         list = new ArrayList<GPSInfo>();
         
     	locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);	
@@ -148,8 +154,8 @@ public class TrackService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {  
 
         return START_STICKY;
-      }
- 
+    }
+    
     class TimeDisplayTimerTask extends TimerTask {
  
         @Override
@@ -169,7 +175,7 @@ public class TrackService extends Service {
             		
        			 	if(isProviderReady()){
             		
-	            		if ((location != null)){
+	            		if (location != null){
 	            			//if(location.getAccuracy() < 5){
 	            			 
 		            			/*if(kalmanFilter.equals("on")){
@@ -188,6 +194,30 @@ public class TrackService extends Service {
 			                		kalmanHelper.insert(kalmanInfo);
 		            			}*/
 	            			
+	            			//Calculate a distance for show in the MainActivity screen
+	            			if (startPoint == null){
+	            				startPoint = new Location("StartPoint");
+	            				startPoint.setLatitude(location.getLatitude());
+		        	    		startPoint.setLongitude(location.getLongitude());
+	            			} else{
+	            				endPoint = new Location("EndPoint");
+	            				endPoint.setLatitude(location.getLatitude());
+	            	    		endPoint.setLongitude(location.getLongitude());
+	                		
+	            	    		distance += startPoint.distanceTo(endPoint);
+	            	    		startPoint.setLatitude(location.getLatitude());
+		        	    		startPoint.setLongitude(location.getLongitude());
+	            			}
+	            			
+	            			//Calculate a averageSpeed for show in the MainActivity screen
+	            			countRecords++;
+	            			speed += location.getSpeed();
+	            			String averageSpeed = Utils.getFormattedSpeed(speed/countRecords, speedUnitValue)
+	            					+ " " + speedUnitEntry;
+	            			
+	            			String distanceToString = Utils.getFormattedDistance(distance, distanceUnitValue)
+	            					+ " " + distanceUnitEntry;
+	            			
 		            		info.setId(1);
 		            		info.setLongitude(location.getLongitude());
 		            		info.setLatitude(location.getLatitude());
@@ -204,7 +234,9 @@ public class TrackService extends Service {
 		            		
 		            		count = locationLoader.getSatelliteCount();
 		            		
-		        		 	sendResult(count, location.getLatitude(), location.getLongitude());
+		        		 	sendResult(count, location.getLatitude(), location.getLongitude(), 
+		        		 			averageSpeed, distanceToString);
+		        		 	
 		            		Log.i("DEBUG", "Inserted");
 	            			}
 	            		}
@@ -213,12 +245,6 @@ public class TrackService extends Service {
                 //}
  
             });
-        }
- 
-        private String getDateTime() {
-            // get date time in custom format
-            SimpleDateFormat sdf = new SimpleDateFormat("[yyyy/MM/dd - HH:mm:ss]");
-            return sdf.format(new Date());
         }
         
         //If selected provider is "GPS" we check if count of satellite more then 4
@@ -232,15 +258,14 @@ public class TrackService extends Service {
         	return false;
         }
         
-        public void sendResult(int message, double lat, double lng) {
-            /*Intent intent = new Intent(MainActivity.SATELLITE_COUNT);
-            //if(message != 0)
-                intent.putExtra("count", message);
-            broadcastSatelliteCount.sendBroadcast(intent);*/
+        public void sendResult(int message, double lat, double lng, String averageSpeed, String distance) {
+
         	Intent local = new Intent();
         	local.putExtra("count", message);
         	local.putExtra("lat", lat);
         	local.putExtra("lng", lng);
+        	local.putExtra("averageSpeed", averageSpeed);
+        	local.putExtra("distance", distance);
         	local.setAction(Contract.SATELLITE_COUNT);
 
         	sendBroadcast(local);
@@ -250,14 +275,6 @@ public class TrackService extends Service {
     //get a obtained data(the rout)
     public List<GPSInfo> getList(){
     	return list;
-    }
-    
-    public void setCameraPosition(CameraPosition cameraPosition){
-    	cp = cameraPosition;
-    }
-    
-    public CameraPosition getCameraPosition(){
-    	return cp;
     }
     
     public void stop(){

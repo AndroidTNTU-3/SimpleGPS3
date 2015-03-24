@@ -19,7 +19,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:alpha="30"
-        android:background="@drawable/rect_gray" >
+        android:background="@color/gpsInfoBackgroundColor" >
 
         <ProgressBar
             android:id="@+id/progressBar1"

@@ -1,13 +1,11 @@
 package com.example.simplegpstracker;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.example.simplegpstracker.GetPoliLine.PoliLoaderCallBack;
-import com.example.simplegpstracker.GetPoliLine1.PoliLoaderCallBack1;
 import com.example.simplegpstracker.db.GPSInfoHelper;
 import com.example.simplegpstracker.db.KalmanInfoHelper;
 import com.example.simplegpstracker.entity.GPSInfo;
@@ -20,7 +18,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class PointAdapter implements PoliLoaderCallBack1{
+public class PointAdapter implements PoliLoaderCallBack{
 	
 	private SharedPreferences preferences;
 	private String travelMode;
@@ -32,7 +30,7 @@ public class PointAdapter implements PoliLoaderCallBack1{
 	PointAdapterCallBack pointAdapterCallBack;
 	int partListCount = 0;
 	int iter = 0;
-	GetPoliLine1 getPoly1;
+	GetPoliLine getPoly;
 	
 	public static interface PointAdapterCallBack{
 		public void drawPoli(ArrayList<LatLng> points);
@@ -43,8 +41,8 @@ public class PointAdapter implements PoliLoaderCallBack1{
 		this.context = context;
 		getPreference();
 		list = new ArrayList<GPSInfo>();
-		getPoly1 = GetPoliLine1.getInstance(context);
-		getPoly1.setLoaderCallBack(this);
+		getPoly = GetPoliLine.getInstance(context);
+		getPoly.setLoaderCallBack(this);
 
 	}
 	/*
@@ -94,14 +92,10 @@ public class PointAdapter implements PoliLoaderCallBack1{
 		
 			
 		//2. Get array of points from google directions
-		//GetPoliLine getPoly = new GetPoliLine();
-		//GetPoliLine1 getPoly1 = new GetPoliLine1();
+
 	
 		//3. Set a callback. After parsing we will get a new points here in setPoli();
-		//getPoly.setLoaderCallBack(this);
-		//getPoly.start(url);
-		//getPoly1.setLoaderCallBack(this);
-		getPoly1.buildRequest(url, partListCount);
+		getPoly.buildRequest(url, partListCount);
 				 
 	}
 	

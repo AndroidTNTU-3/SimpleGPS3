@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<TextView 
+	    android:id="@+id/tvRouteName" 
+	    style="@style/RouteName1TextStyle" 
+	    android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"/>
+	
+    
+		<TableLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <TableRow
+	            android:id="@+id/tableRow1"
+	            android:layout_width="wrap_content"	            
+	            android:layout_height="wrap_content" >
+
+	            <TextView
+	                android:id="@+id/tvLabelFrom"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                style="@style/RouteRow2TextStyle" 
+	                android:textStyle="bold"
+	                android:text="@string/from" />
+
+	            <TextView
+	                android:id="@+id/tvRouteStartTime"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                style="@style/RouteRow2TextStyle" 
+	                android:text="" />
+	            
+	            <TextView
+	                android:id="@+id/tvLabelDuration"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingLeft="6dp"
+	                style="@style/RouteRow2TextStyle" 
+	                android:textStyle="bold" 
+	                android:text="@string/duration" />
+	            
+	            <TextView 
+			    	android:id="@+id/tvRouteDuration" 
+			    	style="@style/RouteRow2TextStyle" 
+			    	android:layout_width="wrap_content"
+		    		android:layout_height="wrap_content"/>
+
+	        </TableRow>
+
+	        <TableRow
+	            android:id="@+id/tableRow2"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+	            
+	            <TextView
+	                android:id="@+id/tvLabelTo"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                style="@style/RouteRow2TextStyle" 
+	                android:textStyle="bold"
+	                android:text="@string/to" />
+
+	            <TextView
+	                android:id="@+id/tvRouteStopTime"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                style="@style/RouteRow2TextStyle"                
+	                android:text="" />
+	            
+	            <TextView
+	                android:id="@+id/tvLabelSpeed"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingLeft="6dp"
+	                style="@style/RouteRow2TextStyle" 
+	                android:textStyle="bold"
+	                android:text="@string/average_speed" />
+	            
+	            <TextView 
+			    	android:id="@+id/tvRouteSpeed" 
+			    	style="@style/RouteRow2TextStyle" 
+			    	android:layout_width="wrap_content"
+		    		android:layout_height="wrap_content"/>
+	        </TableRow>
+
+	        <TableRow
+	            android:id="@+id/tableRow3"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+	            
+	            <TextView
+	                android:id="@+id/tvLabelDistance"
+	                style="@style/RouteRow2TextStyle"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+					android:textStyle="bold"
+	                android:text="@string/distance"/>
+
+	            <TextView
+	                android:id="@+id/tvRouteDistance"
+	                style="@style/RouteRow2TextStyle"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content" />
+	        </TableRow>
+	        
+	</TableLayout>
+	
+</LinearLayout>

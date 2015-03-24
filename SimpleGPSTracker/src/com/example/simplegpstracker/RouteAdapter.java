@@ -120,8 +120,12 @@ public class RouteAdapter extends BaseAdapter {
 		vh.startTime.setText(" " + params.get(position).getStartTime());
 		vh.stopTime.setText(" " + params.get(position).getStopTime());
 		vh.duration.setText(" " + params.get(position).getDuration());
-		vh.averageSpeed.setText(" " + getSpeed(params.get(position).getAverageSpeed()) + " " + speedUnitEntry);
-		vh.distance.setText(" " + getDistance(params.get(position).getDistance()) + " " + distanceUnitEntry);
+		vh.averageSpeed.setText(" " 
+		+ Utils.getFormattedSpeed(params.get(position).getAverageSpeed(), distanceUnitValue) 
+		+ " " + speedUnitEntry);
+		vh.distance.setText(" " 
+		+ Utils.getFormattedDistance(params.get(position).getDistance(), speedUnitValue) 
+		+ " " + distanceUnitEntry);
 
 		return convertView;
 	}

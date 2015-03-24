@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -46,6 +47,7 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -54,6 +56,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -65,7 +68,7 @@ import android.widget.Toast;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity{
 			
 	/*
 	 * Refresh time for timer if sensors not enabled 
@@ -75,6 +78,7 @@ public class MainActivity extends FragmentActivity {
 	private final static int TIMER_TIME_REFRESH = 1000;
 	private final static int COLOR_ROUTE = Color.RED;
 	private static final int NOTIFY_ID = 101;
+	private static final float ALFA_BUTTON = 0.8f;
 					
 	private SharedPreferences preferences;
 	NotificationManager notificationManager;
@@ -110,18 +114,23 @@ public class MainActivity extends FragmentActivity {
 	private MapAdapter mapAdapter;
 	private DirectionsAdapter dAdapter;
 	
+	ImageView ivSatellite;
+	ImageView ivSpeed;
+	ImageView ivRoad;
 	ImageView ivMap;
 	ImageView ivStartStop;
 	ImageView ivSend;
 	ImageView ivList;
 	ImageView ivClose;
 	LinearLayout llListRoute;
+	LinearLayout progressLayout;
 	private ListView listView;
 	private List<ListRouteParams> params;
 		
 	TextView tvSatelliteCount;
+	TextView tvAverageSpeed;
+	TextView tvDistance;
 	
-	LinearLayout progressLayout;
 	RouteAdapter routeAdapter;
 	
 	private boolean isRouteSaved = false;
@@ -152,6 +161,10 @@ public class MainActivity extends FragmentActivity {
 	
 	private String selectedName;
 	LatLngBounds bounds = null;
+	
+	double averageSpeed = 0.0;
+	int averageSpeedCount = 1;
+	
 	/*
 	 * 0: default
 	 * 1: route drawing is RealTime
@@ -171,6 +184,9 @@ public class MainActivity extends FragmentActivity {
 		
         list = new ArrayList<GPSInfo>();
         
+        ivSatellite = (ImageView) findViewById(R.id.ivSatellite);
+        ivSpeed = (ImageView) findViewById(R.id.ivSpeed);
+        ivRoad = (ImageView) findViewById(R.id.ivRoad);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         ivMap.setOnClickListener(new ClickListener());
         ivStartStop = (ImageView) findViewById(R.id.ivRecord);
@@ -184,8 +200,19 @@ public class MainActivity extends FragmentActivity {
         llListRoute = (LinearLayout) findViewById(R.id.llRouteList);
         listView = (ListView) findViewById(R.id.lvMyRoute);
         listView.setOnItemClickListener(new ListListener());
-        registerForContextMenu(listView);
+        progressLayout = (LinearLayout) findViewById(R.id.progressLayout);   
+        progressLayout.setVisibility(View.INVISIBLE);
+        registerForContextMenu(listView);  
         
+        setAlpha(ivSatellite, ALFA_BUTTON);
+        setAlpha(ivSpeed, ALFA_BUTTON);
+        setAlpha(ivRoad, ALFA_BUTTON);
+        setAlpha(ivStartStop, ALFA_BUTTON);
+        setAlpha(ivSend, ALFA_BUTTON);
+        setAlpha(ivMap, ALFA_BUTTON);
+        setAlpha(ivList, ALFA_BUTTON);
+        //setAlpha(progressLayout, ALFA_BUTTON);
+
         //After rotate screen service maybe is a running state
         /*if(UtilsNet.IsServiceRunning(context)) {
         	ivStartStop.setImageResource(R.drawable.stop_selector);
@@ -193,6 +220,8 @@ public class MainActivity extends FragmentActivity {
         }*/
 
         tvSatelliteCount = (TextView) findViewById(R.id.tvSatelliteCount);
+        tvAverageSpeed = (TextView) findViewById(R.id.tvAverageSpeed);
+        tvDistance = (TextView) findViewById(R.id.tvDistance);
         
         getPreferences();
         
@@ -280,12 +309,19 @@ public class MainActivity extends FragmentActivity {
         @Override
           public void onReceive( Context context, Intent intent )
           {
-              int satelliteCount = intent.getIntExtra("count", 0);
-              LatLng point = new LatLng(intent.getDoubleExtra("lat", 0.0),
+              
+        	averageSpeedCount++ ;
+        	
+        	int satelliteCount = intent.getIntExtra("count", 0);
+        	String averageSpeed = intent.getStringExtra("averageSpeed");
+        	String distance = intent.getStringExtra("distance");
+            LatLng point = new LatLng(intent.getDoubleExtra("lat", 0.0),
             		  					intent.getDoubleExtra("lng", 0.0));
               drawPoly(point, Color.RED);
               Log.i("DEBUG:", "point" + "lat: " + point.latitude + "lon:" + point.longitude);
               tvSatelliteCount.setText(String.valueOf(satelliteCount));
+              tvAverageSpeed.setText(String.valueOf(averageSpeed));
+              tvDistance.setText(String.valueOf(distance));
           }
         };
         		      
@@ -334,6 +370,20 @@ public class MainActivity extends FragmentActivity {
 	        	
 	     }	 		 
         
+    }
+    
+    //Set Alfa opacity for view
+    @SuppressLint("NewApi")
+    public static void setAlpha(View view, float alpha)
+    {
+        if (Build.VERSION.SDK_INT < 11)
+        {
+            final AlphaAnimation animation = new AlphaAnimation(alpha, alpha);
+            animation.setDuration(0);
+            animation.setFillAfter(true);
+            view.startAnimation(animation);
+        }
+        else view.setAlpha(alpha);
     }
     
          
@@ -559,13 +609,14 @@ public class MainActivity extends FragmentActivity {
 					toast.show();
 				}else{
 					//Intent iMap = new Intent(context, ViewMapActivity.class);
-					dAdapter = new DirectionsAdapter(map, context, preferences);
+					dAdapter = new DirectionsAdapter(map, context, preferences, progressLayout);
 					if(routeDrawingMode == Contract.DRAWING_MODE_NONE){
 						if(list != null && list.size() > 2){
 							/*iMap.putParcelableArrayListExtra("pointsList", (ArrayList<? extends Parcelable>) list);
 							startActivity(iMap);*/
 							routeDrawingMode = Contract.DRAWING_MODE_PROCESSED_ROUTE;
 							dAdapter.compute(list);
+
 						}else {
 							new DialogMapAllert().show(getSupportFragmentManager(), "DialogMapAllert");
 						}
@@ -576,6 +627,7 @@ public class MainActivity extends FragmentActivity {
 							routeDrawingMode = Contract.DRAWING_MODE_PROCESSED_ROUTE;
 							dAdapter.compute(listRoutePoints);
 					}
+																	
 				}
 				break;
 			case R.id.ivSend:
@@ -684,13 +736,8 @@ public class MainActivity extends FragmentActivity {
 			startPoint = null;
 			listRoutePoints = helper.getRoutePoints(params.get(position).getName());
 			llListRoute.setVisibility(View.INVISIBLE);	
-			LatLng point = null;
 			
 			drawSavedRoute(listRoutePoints);
-	    	/*for(GPSInfo info: listRoutePoints){
-	    		point = new LatLng(info.getLatitude(), info.getLongitude());
-	    		drawPoly(point, Color.RED);
-	    	}*/
 	    	
 			mapAdapter.setRoute(listRoutePoints);
 		}
@@ -772,7 +819,6 @@ public class MainActivity extends FragmentActivity {
         }
         if(UtilsNet.IsServiceRunning(context)){
         	Log.i("DEBUG SER:", "Service is Running");
-        	trackService.setCameraPosition(map.getCameraPosition());
         	unbindService(sConn);
         }else Log.i("DEBUG SER:", "Service is Stopped");
         
@@ -819,7 +865,6 @@ public class MainActivity extends FragmentActivity {
 			 
 			 	LocalBinder mBinder = (LocalBinder) binder;
 		        trackService = mBinder.getService();
-		        cameraPosition = trackService.getCameraPosition();
 		        temp = trackService.getList();
 		        if(temp != null && temp.size() > 2){
 		        	
@@ -832,14 +877,6 @@ public class MainActivity extends FragmentActivity {
 		        	southern = temp;
 		        }
 		        bounds = new LatLngBounds(southern, northern);
-		        /*try{CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(
-		                new LatLngBounds(start, stop),
-		                10);
-		            map.animateCamera(cameraUpdate);
-		            map.getCameraPosition();
-		        }catch(IllegalArgumentException e){
-		        	e.setStackTrace(null);
-		        }*/
 		        }
 		        
 		        drawSavedRoute(temp);
